@@ -17,16 +17,17 @@ StudentWorld::StudentWorld(string assetDir)
 
 int StudentWorld::init()
 {
+	//create nachenblaster
+	m_nach = new NachenBlaster(this);
 	//create 30 stars
 	for (int i = 0; i < 30; i++) {
 		int x = randInt(0, VIEW_WIDTH - 1);
 		int y = randInt(0, VIEW_HEIGHT - 1);
 		int divSize = randInt(10, 100);
 		double size = 5.0 / divSize;
-		Star* p = new Star(x, y, size);
+		Star* p = new Star(x, y, size, this);
 		m_v.push_back(p);
 	}
-
 
     return GWSTATUS_CONTINUE_GAME;
 }
@@ -48,7 +49,6 @@ void StudentWorld::cleanUp()
 
 void StudentWorld::doSomthing() {
 	//do somthing for all the actors in the actor vector
-
 	vector<Actor*>::iterator i = m_v.begin();
 	while (i != m_v.end()) {
 		(*i)->doSomething();
@@ -59,6 +59,7 @@ void StudentWorld::doSomthing() {
 		else
 			i++;
 	}
+	m_nach->doSomething();
 }
 
 void StudentWorld::newItem() {
@@ -69,7 +70,7 @@ void StudentWorld::newItem() {
 		int y = randInt(0, VIEW_HEIGHT - 1);
 		int divSize = randInt(10, 100);
 		double size = 5.0 / divSize;
-		Star* p = new Star(x, y, size);
+		Star* p = new Star(x, y, size, this);
 		m_v.push_back(p);
 	}
 }

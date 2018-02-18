@@ -22,5 +22,4 @@ private:
 	NachenBlaster * m_nach;
 	std::vector<Actor*> m_v;
 };
-
 #endif // STUDENTWORLD_H_
