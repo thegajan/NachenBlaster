@@ -40,8 +40,6 @@ int StudentWorld::move()
     // Notice that the return value GWSTATUS_PLAYER_DIED will cause our framework to end the current level.
 	doSomthing();
 	newItem();
-	//decrement lives
-    decLives();
 	displayStatus();
 	return GWSTATUS_CONTINUE_GAME;
 }
@@ -83,7 +81,6 @@ void StudentWorld::displayStatus() {
 	ostringstream oss;
 	oss << "Lives: " << getLives() << "  Health: ";
 	int healthPerc = m_nach->getHealth() * 2;
-	//ADD SCORE
 	oss << healthPerc << "%  Score: " << getScore() << "  Level: " << getLevel() << "  Cabbages: ";
 	int cabbages = (m_nach->getCabbage() * 100) / 30;
 	oss << cabbages << "%  Torpedoes: " << m_nach->getTorpedo();
