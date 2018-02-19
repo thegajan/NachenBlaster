@@ -33,9 +33,11 @@ public:
 	virtual ~NachenBlaster() {}
 	virtual void doSomething();
 	void fireCabbage(int x, int y);
+	void fireTorpedo(int x, int y);
 private:
 	int m_life = 50;
 	int m_cabbage = 30;
+	int m_torpedo = 1;
 };
 
 //class projectile
@@ -52,6 +54,14 @@ class Cabbage: public Projectile {
 public:
 	Cabbage(int startX, int startY, StudentWorld* world);
 	virtual ~Cabbage() {};
+	virtual void doSomething();
+};
+
+//torpedo class
+class Torpedo : public Projectile {
+public: 
+	Torpedo(int startX, int startY, StudentWorld* world);
+	virtual ~Torpedo() {};
 	virtual void doSomething();
 };
 

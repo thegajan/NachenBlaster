@@ -71,11 +71,13 @@ void NachenBlaster::doSomething() {
 				moveTo(x, y + 6);
 			break;
 		case KEY_PRESS_SPACE:
-			if (m_cabbage >= 5) {
+			if (m_cabbage >= 5)
 				fireCabbage(x, y);
-			}
 			break;
-		
+		case KEY_PRESS_TAB:
+			if (m_torpedo >= 1)
+				fireTorpedo(x, y);
+			break;
 		}
 	}
 	if (m_cabbage < 30)
@@ -88,6 +90,14 @@ void NachenBlaster::fireCabbage(int x, int y){
 	getWorld()->playSound(SOUND_PLAYER_SHOOT);
 	Cabbage* c = new Cabbage(x + 12, y, world);
 	world->addItem(c);
+}
+
+void NachenBlaster::fireTorpedo(int x, int y) {
+	m_torpedo--;
+	StudentWorld* world = getWorld();
+	getWorld()->playSound(SOUND_TORPEDO);
+	Torpedo* t = new Torpedo(x + 12, y, world);
+	world->addItem(t);
 }
 
 //projectile class
@@ -108,4 +118,17 @@ void Cabbage::doSomething() {
 	moveTo(x + 8, y);
 	int d = getDirection();
 	setDirection(d + 20);
+}
+
+//torpedo class
+Torpedo::Torpedo(int startX, int startY, StudentWorld* world)
+	:Projectile(IID_TORPEDO, startX, startY, world)
+{}
+
+void Torpedo::doSomething() {
+	offScreen();
+	if (!getState())
+		return;
+	int x = getX(), y = getY();
+	moveTo(x + 8, y);
 }
