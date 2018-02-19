@@ -100,11 +100,10 @@ Cabbage::Cabbage(int startX, int startY, StudentWorld* world)
 {}
 
 void Cabbage::doSomething() {
-	if (!getState())
-		return;
 	offScreen();
 	if (!getState())
 		return;
 	int x = getX(), y = getY();
 	moveTo(x + 8, y);
+	setDirection(20);
 }
