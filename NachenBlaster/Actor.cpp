@@ -75,6 +75,7 @@ void NachenBlaster::doSomething() {
 				fireCabbage(x, y);
 			}
 			break;
+		
 		}
 	}
 	if (m_cabbage < 30)
@@ -105,5 +106,6 @@ void Cabbage::doSomething() {
 		return;
 	int x = getX(), y = getY();
 	moveTo(x + 8, y);
-	setDirection(20);
+	int d = getDirection();
+	setDirection(d + 20);
 }
