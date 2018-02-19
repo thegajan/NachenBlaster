@@ -1,6 +1,7 @@
 #include "StudentWorld.h"
 #include "GameConstants.h"
 #include <string>
+#include <sstream>
 using namespace std;
 
 GameWorld* createStudentWorld(string assetDir)
@@ -28,6 +29,7 @@ int StudentWorld::init()
 		Star* p = new Star(x, y, size, this);
 		m_v.push_back(p);
 	}
+	//displayStatus();
 
     return GWSTATUS_CONTINUE_GAME;
 }
@@ -40,6 +42,7 @@ int StudentWorld::move()
 	newItem();
 	//decrement lives
     decLives();
+	displayStatus();
 	return GWSTATUS_CONTINUE_GAME;
 }
 
@@ -74,4 +77,16 @@ void StudentWorld::newItem() {
 		Star* p = new Star(x, y, size, this);
 		m_v.push_back(p);
 	}
+}
+
+void StudentWorld::displayStatus() {
+	ostringstream oss;
+	oss << "Lives: " << getLives() << "  Health: ";
+	int healthPerc = m_nach->getHealth() * 2;
+	//ADD SCORE
+	oss << healthPerc << "%  Score: " << getScore() << "  Level: " << getLevel() << "  Cabbages: ";
+	int cabbages = (m_nach->getCabbage() * 100) / 30;
+	oss << cabbages << "%  Torpedoes: " << m_nach->getTorpedo();
+	string output = oss.str();
+	setGameStatText(output);
 }

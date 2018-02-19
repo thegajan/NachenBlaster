@@ -85,7 +85,7 @@ void NachenBlaster::doSomething() {
 }
 
 void NachenBlaster::fireCabbage(int x, int y){
-	m_cabbage -= 5;
+	m_cabbage = m_cabbage - 5;
 	StudentWorld* world = getWorld();
 	getWorld()->playSound(SOUND_PLAYER_SHOOT);
 	Cabbage* c = new Cabbage(x + 12, y, world);

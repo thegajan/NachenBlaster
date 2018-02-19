@@ -34,8 +34,10 @@ public:
 	virtual void doSomething();
 	void fireCabbage(int x, int y);
 	void fireTorpedo(int x, int y);
+	int getHealth() { return m_health; };
+	int getCabbage() { return m_cabbage; };
+	int getTorpedo() { return m_torpedo; };
 private:
-	int m_life = 3;
 	int m_health = 50;
 	int m_cabbage = 30;
 	int m_torpedo = 0;

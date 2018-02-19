@@ -17,6 +17,7 @@ public:
     virtual void cleanUp();
 	void doSomthing();
 	void newItem();
+	void displayStatus();
 	template <typename Data>
 	void addItem(Data* x) {
 		m_v.push_back(x);
