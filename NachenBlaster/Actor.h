@@ -35,9 +35,10 @@ public:
 	void fireCabbage(int x, int y);
 	void fireTorpedo(int x, int y);
 private:
-	int m_life = 50;
+	int m_life = 3;
+	int m_health = 50;
 	int m_cabbage = 30;
-	int m_torpedo = 1;
+	int m_torpedo = 0;
 };
 
 //class projectile
