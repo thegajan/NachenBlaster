@@ -14,12 +14,15 @@ GameWorld* createStudentWorld(string assetDir)
 StudentWorld::StudentWorld(string assetDir)
 : GameWorld(assetDir)
 {
+	m_nach = new NachenBlaster(this);
+}
+
+StudentWorld::~StudentWorld() {
+	cleanUp();
 }
 
 int StudentWorld::init()
 {
-	//create nachenblaster
-	m_nach = new NachenBlaster(this);
 	//create 30 stars
 	for (int i = 0; i < 30; i++) {
 		int x = randInt(0, VIEW_WIDTH - 1);
@@ -46,6 +49,12 @@ int StudentWorld::move()
 
 void StudentWorld::cleanUp()
 {
+	delete m_nach;
+	vector<Actor*>::iterator i = m_v.begin();
+	while (i != m_v.end()) {
+		delete *i;
+		i = m_v.erase(i);
+	}
 }
 
 void StudentWorld::doSomthing() {
