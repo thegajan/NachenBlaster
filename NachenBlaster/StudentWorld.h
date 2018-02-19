@@ -17,9 +17,13 @@ public:
     virtual void cleanUp();
 	void doSomthing();
 	void newItem();
-
+	template <typename Data>
+	void addItem(Data* x) {
+		m_v.push_back(x);
+	}
 private:
 	NachenBlaster * m_nach;
 	std::vector<Actor*> m_v;
 };
+
 #endif // STUDENTWORLD_H_

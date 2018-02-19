@@ -2,38 +2,57 @@
 #define ACTOR_H_
 
 #include "GraphObject.h"
-#include "GameWorld.h"
+
+class StudentWorld;
 
 // Students:  Add code to this file, Actor.cpp, StudentWorld.h, and StudentWorld.cpp
 class Actor: public GraphObject {
 public:
-	Actor(int imageID, int startX, int startY, GameWorld* world, int startDirection = 0, double size = 1.0, int depth = 0);
+	Actor(int imageID, int startX, int startY, StudentWorld* world, int startDirection = 0, double size = 1.0, int depth = 0);
 	virtual ~Actor() {}
 	virtual void doSomething() = 0;
 	bool getState() const;
 	void changeState();
-	GameWorld* getWorld();
+	StudentWorld* getWorld();
+	virtual void offScreen();
 private:
 	bool m_state = true;
-	GameWorld* m_world;
+	StudentWorld* m_world;
 };
 
 class Star: public Actor {
 public:
-	Star(int startX, int startY, double size, GameWorld* world, int startDirection = 0);
+	Star(int startX, int startY, double size, StudentWorld* world, int startDirection = 0);
 	virtual ~Star() {}
-	void doSomething();
-	void offScreen();
+	virtual void doSomething();
 };
 
 class NachenBlaster: public Actor {
 public:
-	NachenBlaster(GameWorld* world);
+	NachenBlaster(StudentWorld* world);
 	virtual ~NachenBlaster() {}
-	void doSomething();
+	virtual void doSomething();
+	void fireCabbage(int x, int y);
 private:
 	int m_life = 50;
 	int m_cabbage = 30;
+};
+
+//class projectile
+
+class Projectile: public Actor {
+public:
+	Projectile(int imageID, int startX, int startY, StudentWorld* world, int startDirection = 0);
+	virtual ~Projectile() {};
+};
+
+//cabbage class
+
+class Cabbage: public Projectile {
+public:
+	Cabbage(int startX, int startY, StudentWorld* world);
+	virtual ~Cabbage() {};
+	virtual void doSomething();
 };
 
 #endif // ACTOR_H_

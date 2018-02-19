@@ -1,6 +1,10 @@
 ﻿  Actor.cpp
-c:\gajan\school\ucla\freshman\winter\cs32\projects\nachenblaster\nachenblaster\actor.cpp(31): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-c:\gajan\school\ucla\freshman\winter\cs32\projects\nachenblaster\nachenblaster\actor.cpp(32): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-c:\gajan\school\ucla\freshman\winter\cs32\projects\nachenblaster\nachenblaster\actor.cpp(38): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-c:\gajan\school\ucla\freshman\winter\cs32\projects\nachenblaster\nachenblaster\actor.cpp(56): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+c:\gajan\school\ucla\freshman\winter\cs32\projects\nachenblaster\nachenblaster\actor.cpp(26): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+c:\gajan\school\ucla\freshman\winter\cs32\projects\nachenblaster\nachenblaster\actor.cpp(36): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+c:\gajan\school\ucla\freshman\winter\cs32\projects\nachenblaster\nachenblaster\actor.cpp(37): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+c:\gajan\school\ucla\freshman\winter\cs32\projects\nachenblaster\nachenblaster\actor.cpp(55): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+c:\gajan\school\ucla\freshman\winter\cs32\projects\nachenblaster\nachenblaster\actor.cpp(108): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+  Generating Code...
+  Skipping... (no relevant changes detected)
+  StudentWorld.cpp
   NachenBlaster.vcxproj -> C:\Gajan\School\UCLA\Freshman\Winter\CS32\Projects\NachenBlaster\Debug\NachenBlaster.exe

@@ -49,6 +49,8 @@ void StudentWorld::cleanUp()
 
 void StudentWorld::doSomthing() {
 	//do somthing for all the actors in the actor vector
+	m_nach->doSomething();
+
 	vector<Actor*>::iterator i = m_v.begin();
 	while (i != m_v.end()) {
 		(*i)->doSomething();
@@ -59,7 +61,6 @@ void StudentWorld::doSomthing() {
 		else
 			i++;
 	}
-	m_nach->doSomething();
 }
 
 void StudentWorld::newItem() {
