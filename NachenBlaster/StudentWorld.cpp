@@ -12,9 +12,9 @@ GameWorld* createStudentWorld(string assetDir)
 // Students:  Add code to this file, StudentWorld.h, Actor.h and Actor.cpp
 
 StudentWorld::StudentWorld(string assetDir)
-: GameWorld(assetDir)
+	: GameWorld(assetDir)
 {
-	m_nach = new NachenBlaster(this);
+	m_numVillains = 6 + (4 * getLevel());
 }
 
 StudentWorld::~StudentWorld() {
@@ -24,24 +24,44 @@ StudentWorld::~StudentWorld() {
 int StudentWorld::init()
 {
 	//create 30 stars
+	m_nach = new NachenBlaster(this);
+
 	for (int i = 0; i < 30; i++) {
 		int x = randInt(0, VIEW_WIDTH - 1);
 		int y = randInt(0, VIEW_HEIGHT - 1);
-		int divSize = randInt(10, 100);
-		double size = 5.0 / divSize;
-		Star* p = new Star(x, y, size, this);
-		m_v.push_back(p);
+		Star* p = new Star(x, y, this);
+		addItem(p);
 	}
 	//displayStatus();
 
-    return GWSTATUS_CONTINUE_GAME;
+	return GWSTATUS_CONTINUE_GAME;
 }
 
 int StudentWorld::move()
 {
-    // This code is here merely to allow the game to build, run, and terminate after you hit enter.
-    // Notice that the return value GWSTATUS_PLAYER_DIED will cause our framework to end the current level.
-	doSomthing();
+	// This code is here merely to allow the game to build, run, and terminate after you hit enter.
+	// Notice that the return value GWSTATUS_PLAYER_DIED will cause our framework to end the current level.
+	//make nachenblaster do something
+	//make each actor do something
+	vector<Actor*>::iterator i = m_v.begin();
+	while (i != m_v.end()) {
+		(*i)->doSomething();
+		//if actor is dead, delete it
+		if (!((*i)->getState())) {
+			//if is evil decrement enemy count
+			if ((*i)->isEvil())
+				m_numVillainsDestroyed++;
+			delete *i;
+			i = m_v.erase(i);
+		}
+		else
+			i++;
+	}
+	m_nach->doSomething();
+	if (m_nach->getHealth() <= 0)
+		return GWSTATUS_PLAYER_DIED;
+	if (m_numVillainsDestroyed >= m_numVillains)
+		return GWSTATUS_FINISHED_LEVEL;
 	newItem();
 	displayStatus();
 	return GWSTATUS_CONTINUE_GAME;
@@ -57,32 +77,43 @@ void StudentWorld::cleanUp()
 	}
 }
 
-void StudentWorld::doSomthing() {
-	//do somthing for all the actors in the actor vector
-	m_nach->doSomething();
-
-	vector<Actor*>::iterator i = m_v.begin();
-	while (i != m_v.end()) {
-		(*i)->doSomething();
-		if (!(*i)->getState()) {
-			delete *i;
-			i = m_v.erase(i);
-		}
-		else
-			i++;
-	}
-}
-
 void StudentWorld::newItem() {
 	//introduce new stars
 	int x = randInt(0, 14);
 	if (x == 0) {
 		int x = VIEW_WIDTH - 1;
 		int y = randInt(0, VIEW_HEIGHT - 1);
-		int divSize = randInt(10, 100);
-		double size = 5.0 / divSize;
-		Star* p = new Star(x, y, size, this);
-		m_v.push_back(p);
+		Star* p = new Star(x, y, this);
+		addItem(p);
+	}
+	//introduce other stuff
+	//decide whether to add a new enemy
+	int d = m_numVillainsDestroyed;
+	int r = m_numVillains - d;
+	int m = 4 + (0.5*getLevel());
+	int i = 0;
+	vector<Actor*>::iterator it = m_v.begin();
+	while (it != m_v.end()) {
+		if ((*it)->getState() && (*it)->isEvil())
+			i++;
+		it++;
+	}
+	int min = (m < r) ? m : r;
+	//add new enemy depending and decide what type to add
+	if (i < min) {
+		int s1 = 60;
+		int s2 = 20 + getLevel() * 5;
+		int s3 = 5 + getLevel() * 10;
+		int s = s1 + s2 + s3;
+		int rand = randInt(0, s - 1);
+		Actor* a;
+		if (rand <= s1)
+			a = new Smallgon(VIEW_WIDTH - 1, randInt(0, VIEW_HEIGHT), this);
+		else if (rand <= s1 + s2)
+			a = new Smoregon(VIEW_WIDTH - 1, randInt(0, VIEW_HEIGHT), this);
+		else
+			a = new Snagglegon(VIEW_WIDTH - 1, randInt(0, VIEW_HEIGHT), this);
+		addItem(a);
 	}
 }
 

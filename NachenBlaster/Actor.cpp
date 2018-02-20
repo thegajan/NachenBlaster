@@ -1,6 +1,6 @@
 #include "Actor.h"
 #include "StudentWorld.h"
-
+#include <cmath>
 // Students:  Add code to this file, Actor.h, StudentWorld.h, and StudentWorld.cpp
 
 //actor abc
@@ -10,7 +10,7 @@ Actor::Actor(int imageID, int startX, int startY, StudentWorld* world, int start
 	m_world = world;
 }
 
-bool Actor::getState() const{
+bool Actor::getState() const {
 	return m_state;
 }
 
@@ -27,24 +27,43 @@ void Actor::offScreen() {
 	if (x < 0 || y < 0 || x >= VIEW_WIDTH || y >= VIEW_HEIGHT)
 		changeState();
 }
+
+bool Actor::collide(int x1, int y1, int r1, int x2, int y2, int r2) {
+	double distance = sqrt((x2 - x1) ^ 2 + (y2 - y1) ^ 2);
+	if (distance < 0.75*(r1 + r2) && collidable())
+		return true;
+	return false;
+}
+
 //star class
-Star::Star(int startX, int startY, double size, StudentWorld* world, int startDirection)
-	:Actor(IID_STAR, startX, startY, world, startDirection, size, 3)
+Star::Star(int startX, int startY, StudentWorld* world)
+	:Actor(IID_STAR, startX, startY, world, 0, .01*randInt(5, 50), 3)
 {}
 
 void Star::doSomething() {
+	if (!getState())
+		return;
 	int x = getX();
 	int y = getY();
 	moveTo(x - 1, y);
 	offScreen();
 }
 
+//Craft class
+Craft::Craft(int imageID, int startX, int startY, StudentWorld* world, int health)
+	:Actor(imageID, startX, startY, world)
+{
+	m_health = health;
+}
+
 //nachenblaster class
 NachenBlaster::NachenBlaster(StudentWorld* world)
-	:Actor(IID_NACHENBLASTER, 0, 128, world)
+	:Craft(IID_NACHENBLASTER, 0, 128, world, 50)
 {}
 
 void NachenBlaster::doSomething() {
+	if (getHealth() < 0)
+		changeState();
 	//check if nachenblaster is dead
 	if (!getState()) {
 		return;
@@ -59,7 +78,7 @@ void NachenBlaster::doSomething() {
 				moveTo(x - 6, y);
 			break;
 		case KEY_PRESS_RIGHT:
-			if (!( x + 6 >= VIEW_WIDTH))
+			if (!(x + 6 >= VIEW_WIDTH))
 				moveTo(x + 6, y);
 			break;
 		case KEY_PRESS_DOWN:
@@ -84,7 +103,7 @@ void NachenBlaster::doSomething() {
 		m_cabbage++;
 }
 
-void NachenBlaster::fireCabbage(int x, int y){
+void NachenBlaster::fireCabbage(int x, int y) {
 	m_cabbage = m_cabbage - 5;
 	StudentWorld* world = getWorld();
 	getWorld()->playSound(SOUND_PLAYER_SHOOT);
@@ -100,6 +119,50 @@ void NachenBlaster::fireTorpedo(int x, int y) {
 	world->addItem(t);
 }
 
+//Villian class
+Villain::Villain(int imageID, int startX, int startY, StudentWorld* world, int health, double travelSpeed, int flightPath)
+	:Craft(imageID, startX, startY, world, health)
+{
+	m_travelSpeed = travelSpeed;
+	m_flightPath = flightPath;
+}
+
+Smallgon::Smallgon(int startX, int startY, StudentWorld* world)
+	:Villain(IID_SMALLGON, startX, startY, world, 5 * (1 + (world->getLevel() - 1)*0.1), 2.0, 0)
+{}
+
+void Smallgon::doSomething() {
+	if (!getState())
+		return;
+	offScreen();
+	if (!getState())
+		return;
+}
+
+Smoregon::Smoregon(int startX, int startY, StudentWorld* world)
+	:Villain(IID_SMOREGON, startX, startY, world, 5 * (1 + (world->getLevel() - 1)*0.1), 2.0, 0)
+{}
+
+void Smoregon::doSomething() {
+	if (!getState())
+		return;
+	offScreen();
+	if (!getState())
+		return;
+}
+
+Snagglegon::Snagglegon(int startX, int startY, StudentWorld* world)
+	:Villain(IID_SNAGGLEGON, startX, startY, world, 10 * (1 + (world->getLevel() - 1)*0.1), 2.0, 0)
+{}
+
+void Snagglegon::doSomething() {
+	if (!getState())
+		return;
+	offScreen();
+	if (!getState())
+		return;
+}
+
 //projectile class
 Projectile::Projectile(int imageID, int startX, int startY, StudentWorld* world, int startDirection)
 	:Actor(imageID, startX, startY, world, startDirection, 0.5, 1)
@@ -107,10 +170,12 @@ Projectile::Projectile(int imageID, int startX, int startY, StudentWorld* world,
 
 //projectile class
 Cabbage::Cabbage(int startX, int startY, StudentWorld* world)
-	:Projectile(IID_CABBAGE, startX, startY, world)
+	: Projectile(IID_CABBAGE, startX, startY, world)
 {}
 
 void Cabbage::doSomething() {
+	if (!getState())
+		return;
 	offScreen();
 	if (!getState())
 		return;
@@ -126,6 +191,8 @@ Torpedo::Torpedo(int startX, int startY, StudentWorld* world)
 {}
 
 void Torpedo::doSomething() {
+	if (!getState())
+		return;
 	offScreen();
 	if (!getState())
 		return;
