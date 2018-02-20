@@ -48,6 +48,7 @@ public:
 	virtual ~Craft() {}
 	int getHealth() { return m_health; }
 	virtual void doSomething() = 0;
+	void takeDamage(int damage);
 private:
 	int m_health;
 };
@@ -108,6 +109,7 @@ class Projectile : public Actor {
 public:
 	Projectile(int imageID, int startX, int startY, StudentWorld* world, int startDirection = 0);
 	virtual ~Projectile() {};
+	virtual void collideWithCraft(int damage);
 };
 
 //cabbage class

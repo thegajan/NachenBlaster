@@ -78,6 +78,10 @@ Craft::Craft(int imageID, int startX, int startY, StudentWorld* world, int healt
 	m_health = health;
 }
 
+void Craft::takeDamage(int damage) {
+	m_health = m_health - damage;
+}
+
 //nachenblaster class
 NachenBlaster::NachenBlaster(StudentWorld* world)
 	:Craft(IID_NACHENBLASTER, 0, 128, world, 50)
