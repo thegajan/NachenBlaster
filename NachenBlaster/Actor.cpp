@@ -55,6 +55,22 @@ void Star::doSomething() {
 	offScreen();
 }
 
+//explosion class
+Explosion::Explosion(int startX, int startY, StudentWorld* world) 
+	:Actor(IID_EXPLOSION, startX, startY, world)
+{}
+
+void Explosion::doSomething() {
+	if (!getState())
+		return;
+	if (m_ticks > 4) {
+		changeState();
+		return;
+	}
+	setSize(1.5*getSize());
+	m_ticks++;
+}
+
 //Craft class
 Craft::Craft(int imageID, int startX, int startY, StudentWorld* world, int health)
 	:Actor(imageID, startX, startY, world)

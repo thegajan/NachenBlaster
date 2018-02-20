@@ -31,6 +31,15 @@ public:
 	virtual bool collidable() { return false; }
 };
 
+class Explosion : public Actor {
+public:
+	Explosion(int startX, int startY, StudentWorld* world);
+	virtual ~Explosion() {};
+	virtual void doSomething();
+private:
+	int m_ticks = 0;
+};
+
 //Craft class
 
 class Craft : public Actor {
@@ -76,21 +85,21 @@ class Smallgon : public Villain {
 public:
 	Smallgon(int startX, int startY, StudentWorld* world);
 	virtual ~Smallgon() {};
-	void doSomething();
+	virtual void doSomething();
 };
 
 class Smoregon : public Villain {
 public:
 	Smoregon(int startX, int startY, StudentWorld* world);
 	virtual ~Smoregon() {};
-	void doSomething();
+	virtual void doSomething();
 };
 
 class Snagglegon : public Villain {
 public:
 	Snagglegon(int startX, int startY, StudentWorld* world);
 	virtual ~Snagglegon() {};
-	void doSomething();
+	virtual void doSomething();
 };
 
 //class projectile

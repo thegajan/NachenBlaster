@@ -43,19 +43,16 @@ int StudentWorld::move()
 	// Notice that the return value GWSTATUS_PLAYER_DIED will cause our framework to end the current level.
 	//make nachenblaster do something
 	//make each actor do something
-	vector<Actor*>::iterator i = m_v.begin();
-	while (i != m_v.end()) {
-		(*i)->doSomething();
-		//if actor is dead, delete it
-		if (!((*i)->getState())) {
-			//if is evil decrement enemy count
-			if ((*i)->isEvil())
+	for (vector<Actor*>::size_type n = 0; n < m_v.size();) {
+		m_v[n]->doSomething();
+		if (!(m_v[n]->getState())) {
+			if (m_v[n]->isEvil())
 				m_numVillainsDestroyed++;
-			delete *i;
-			i = m_v.erase(i);
+			delete m_v[n];
+			m_v.erase(m_v.begin() + n);
 		}
 		else
-			i++;
+			n++;
 	}
 	m_nach->doSomething();
 	if (m_nach->getHealth() <= 0) {
