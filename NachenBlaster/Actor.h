@@ -15,7 +15,7 @@ public:
 	void changeState();
 	StudentWorld* getWorld();
 	virtual void offScreen();
-	bool collide(int x1, int y1, int r1, int x2, int y2, int r2);
+	bool collide(Actor* p1, Actor* p2);
 	virtual bool collidable() { return true; }
 	virtual bool isEvil() { return false; }
 private:

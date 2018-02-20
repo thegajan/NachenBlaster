@@ -20,7 +20,7 @@ public:
 	void displayStatus();
 	void addItem(Actor* x) { m_v.push_back(x); }
 private:
-	NachenBlaster * m_nach;
+	NachenBlaster* m_nach;
 	std::vector<Actor*> m_v;
 	int m_numVillains;
 	int m_numVillainsDestroyed = 0;

@@ -28,8 +28,14 @@ void Actor::offScreen() {
 		changeState();
 }
 
-bool Actor::collide(int x1, int y1, int r1, int x2, int y2, int r2) {
-	double distance = sqrt((x2 - x1) ^ 2 + (y2 - y1) ^ 2);
+bool Actor::collide(Actor* p1, Actor* p2) {
+	double x1 = p1->getX();
+	double y1 = p1->getY();
+	double r1 = p1->getRadius();
+	double r2 = p2->getRadius();
+	double x2 = p2->getX();
+	double y2 = p2->getY();
+	double distance = sqrt(pow((x2 - x1), 2) + pow((y2 - y1), 2));
 	if (distance < 0.75*(r1 + r2) && collidable())
 		return true;
 	return false;

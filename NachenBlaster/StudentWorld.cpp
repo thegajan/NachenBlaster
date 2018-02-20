@@ -25,7 +25,7 @@ int StudentWorld::init()
 {
 	//create 30 stars
 	m_nach = new NachenBlaster(this);
-
+	addItem(m_nach);
 	for (int i = 0; i < 30; i++) {
 		int x = randInt(0, VIEW_WIDTH - 1);
 		int y = randInt(0, VIEW_HEIGHT - 1);
@@ -58,8 +58,9 @@ int StudentWorld::move()
 			i++;
 	}
 	m_nach->doSomething();
-	if (m_nach->getHealth() <= 0)
+	if (m_nach->getHealth() <= 0) {
 		return GWSTATUS_PLAYER_DIED;
+	}
 	if (m_numVillainsDestroyed >= m_numVillains)
 		return GWSTATUS_FINISHED_LEVEL;
 	newItem();
@@ -69,7 +70,6 @@ int StudentWorld::move()
 
 void StudentWorld::cleanUp()
 {
-	delete m_nach;
 	vector<Actor*>::iterator i = m_v.begin();
 	while (i != m_v.end()) {
 		delete *i;

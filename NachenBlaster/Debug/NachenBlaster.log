@@ -1,11 +1,6 @@
-﻿  Actor.cpp
-c:\gajan\school\ucla\freshman\winter\cs32\projects\nachenblaster\nachenblaster\actor.cpp(26): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-c:\gajan\school\ucla\freshman\winter\cs32\projects\nachenblaster\nachenblaster\actor.cpp(46): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-c:\gajan\school\ucla\freshman\winter\cs32\projects\nachenblaster\nachenblaster\actor.cpp(47): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-c:\gajan\school\ucla\freshman\winter\cs32\projects\nachenblaster\nachenblaster\actor.cpp(74): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-c:\gajan\school\ucla\freshman\winter\cs32\projects\nachenblaster\nachenblaster\actor.cpp(131): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-c:\gajan\school\ucla\freshman\winter\cs32\projects\nachenblaster\nachenblaster\actor.cpp(143): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-c:\gajan\school\ucla\freshman\winter\cs32\projects\nachenblaster\nachenblaster\actor.cpp(155): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-c:\gajan\school\ucla\freshman\winter\cs32\projects\nachenblaster\nachenblaster\actor.cpp(182): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-c:\gajan\school\ucla\freshman\winter\cs32\projects\nachenblaster\nachenblaster\actor.cpp(199): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+﻿  StudentWorld.cpp
+c:\gajan\school\ucla\freshman\winter\cs32\projects\nachenblaster\nachenblaster\studentworld.cpp(93): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+  Generating Code...
+  Skipping... (no relevant changes detected)
+  Actor.cpp
   NachenBlaster.vcxproj -> C:\Gajan\School\UCLA\Freshman\Winter\CS32\Projects\NachenBlaster\Debug\NachenBlaster.exe
