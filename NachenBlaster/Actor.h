@@ -18,7 +18,11 @@ public:
 	bool collide(Actor* p1, Actor* p2);
 	virtual bool collidable() { return true; }
 	virtual bool isEvil() { return false; }
+	int getHealth() { return m_health; }
+	void setHealth(int health) { m_health = health; }
+	virtual bool isNach() { return false; }
 private:
+	int m_health;
 	bool m_state = true;
 	StudentWorld* m_world;
 };
@@ -41,16 +45,13 @@ private:
 };
 
 //Craft class
-
 class Craft : public Actor {
 public:
 	Craft(int imageID, int startX, int startY, StudentWorld* world, int health);
 	virtual ~Craft() {}
-	int getHealth() { return m_health; }
 	virtual void doSomething() = 0;
-	void takeDamage(int damage);
-private:
-	int m_health;
+	virtual void getHit() = 0;
+	virtual void killed();
 };
 
 //NachenBlaster class
@@ -64,19 +65,21 @@ public:
 	void fireTorpedo(int x, int y);
 	int getCabbage() { return m_cabbage; }
 	int getTorpedo() { return m_torpedo; }
+	virtual void getHit() {}
+	virtual bool isNach() { return true; }
 private:
 	int m_cabbage = 30;
 	int m_torpedo = 0;
 };
 
 //villian class
-
 class Villain : public Craft {
 public:
 	Villain(int imageID, int startX, int startY, StudentWorld* world, int health, double travelSpeed, int flightPath);
-	virtual ~Villain() {};
+	virtual ~Villain() {}
 	virtual void doSomething() = 0;
 	virtual bool isEvil() { return true; }
+	virtual void getHit();
 private:
 	double m_travelSpeed;
 	int m_flightPath;
@@ -92,14 +95,14 @@ public:
 class Smoregon : public Villain {
 public:
 	Smoregon(int startX, int startY, StudentWorld* world);
-	virtual ~Smoregon() {};
+	virtual ~Smoregon() {}
 	virtual void doSomething();
 };
 
 class Snagglegon : public Villain {
 public:
 	Snagglegon(int startX, int startY, StudentWorld* world);
-	virtual ~Snagglegon() {};
+	virtual ~Snagglegon() {}
 	virtual void doSomething();
 };
 
@@ -109,7 +112,8 @@ class Projectile : public Actor {
 public:
 	Projectile(int imageID, int startX, int startY, StudentWorld* world, int startDirection = 0);
 	virtual ~Projectile() {};
-	virtual void collideWithCraft(int damage);
+	virtual void collideWithCraft(int damage, bool targetBad);
+	virtual bool collidable() { return false; }
 };
 
 //cabbage class

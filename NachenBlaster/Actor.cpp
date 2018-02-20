@@ -1,6 +1,7 @@
 #include "Actor.h"
 #include "StudentWorld.h"
 #include <cmath>
+#include <vector>
 // Students:  Add code to this file, Actor.h, StudentWorld.h, and StudentWorld.cpp
 
 //actor abc
@@ -75,11 +76,13 @@ void Explosion::doSomething() {
 Craft::Craft(int imageID, int startX, int startY, StudentWorld* world, int health)
 	:Actor(imageID, startX, startY, world)
 {
-	m_health = health;
+	setHealth(health);
 }
 
-void Craft::takeDamage(int damage) {
-	m_health = m_health - damage;
+void Craft::killed() {
+	if (getHealth() < 0) {
+		changeState();
+	}
 }
 
 //nachenblaster class
@@ -153,6 +156,10 @@ Villain::Villain(int imageID, int startX, int startY, StudentWorld* world, int h
 	m_flightPath = flightPath;
 }
 
+void Villain::getHit() {
+
+}
+
 Smallgon::Smallgon(int startX, int startY, StudentWorld* world)
 	:Villain(IID_SMALLGON, startX, startY, world, 5 * (1 + (world->getLevel() - 1)*0.1), 2.0, 0)
 {}
@@ -163,6 +170,7 @@ void Smallgon::doSomething() {
 	offScreen();
 	if (!getState())
 		return;
+	killed();
 }
 
 Smoregon::Smoregon(int startX, int startY, StudentWorld* world)
@@ -175,6 +183,7 @@ void Smoregon::doSomething() {
 	offScreen();
 	if (!getState())
 		return;
+	killed();
 }
 
 Snagglegon::Snagglegon(int startX, int startY, StudentWorld* world)
@@ -187,6 +196,7 @@ void Snagglegon::doSomething() {
 	offScreen();
 	if (!getState())
 		return;
+	killed();
 }
 
 //projectile class
@@ -194,7 +204,25 @@ Projectile::Projectile(int imageID, int startX, int startY, StudentWorld* world,
 	:Actor(imageID, startX, startY, world, startDirection, 0.5, 1)
 {}
 
-//projectile class
+void Projectile::collideWithCraft(int damage, bool targetBad) {
+	StudentWorld* world = getWorld();
+	std::vector<Actor*> actors = world->getActors();
+	std::vector<Actor*>::iterator it = actors.begin();
+	while (it != actors.end()) {
+		if ((*it)->getState() && (*it)->collide(*it, this)) {
+			int health = (*it)->getHealth();
+			(*it)->setHealth(health - damage);
+			this->changeState();
+			if((*it)->getHealth() > 0)
+				world->playSound(SOUND_BLAST);
+			else
+				world->playSound(SOUND_DEATH);
+		}
+		it++;
+	}
+}
+
+//cabbage class
 Cabbage::Cabbage(int startX, int startY, StudentWorld* world)
 	: Projectile(IID_CABBAGE, startX, startY, world)
 {}
@@ -205,6 +233,7 @@ void Cabbage::doSomething() {
 	offScreen();
 	if (!getState())
 		return;
+	collideWithCraft(2, true);
 	int x = getX(), y = getY();
 	moveTo(x + 8, y);
 	int d = getDirection();
