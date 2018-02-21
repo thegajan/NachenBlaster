@@ -34,35 +34,35 @@ bool Actor::collide(Actor* p1, Actor* p2) {
 }
 
 bool Actor::collision(bool evil) {
-		std::vector<Actor*> actors = m_world->getActors();
-		std::vector<Actor*>::iterator it = actors.begin();
-		while (it != actors.end()) {
-			if ((*it)->type() != type() && (*it)->collide(*it, this)) {
-				//prevent good from shooting good and bad from shooting bad
-				//if (evil && !(*it)->isEvil()) {
-				//	it++;
-				//	continue;
-				//}
-				//if (!evil && !(*it)->isEvil()) {
-				//	it++;
-				//	continue;
-				//}
-				int health = (*it)->getHealth();
-				(*it)->setHealth(health - m_damage);
-				if (type() == 3)
-					changeState();
-				if((*it)->getHealth() > 0 && (*it)->damageable())
-					m_world->playSound(SOUND_BLAST);
-				else {
-					if ((*it)->isEvil())
-						m_world->killVillain();
-					m_world->playSound(SOUND_DEATH);
-					m_world->increaseScore((*it)->score());
-				}
+	std::vector<Actor*> actors = m_world->getActors();
+	std::vector<Actor*>::iterator it = actors.begin();
+	while (it != actors.end()) {
+		if ((*it)->type() != type() && (*it)->collide(*it, this)) {
+			//prevent good from shooting good and bad from shooting bad
+			//if (evil && !(*it)->isEvil()) {
+			//	it++;
+			//	continue;
+			//}
+			//if (!evil && !(*it)->isEvil()) {
+			//	it++;
+			//	continue;
+			//}
+			int health = (*it)->getHealth();
+			(*it)->setHealth(health - m_damage);
+			if (type() == 3)
+				changeState();
+			if ((*it)->getHealth() > 0 && (*it)->damageable())
+				m_world->playSound(SOUND_BLAST);
+			else {
+				if ((*it)->isEvil())
+					m_world->killVillain();
+				m_world->playSound(SOUND_DEATH);
+				m_world->increaseScore((*it)->score());
 			}
-			it++;
 		}
-		return true;
+		it++;
+	}
+	return true;
 }
 
 //star class
@@ -80,19 +80,22 @@ void Star::doSomething() {
 }
 
 //explosion class
-Explosion::Explosion(int startX, int startY, StudentWorld* world) 
+Explosion::Explosion(int startX, int startY, StudentWorld* world)
 	:Actor(IID_EXPLOSION, startX, startY, world)
 {}
 
 void Explosion::doSomething() {
 	if (!getState())
 		return;
-	if (m_ticks > 4) {
+	if (m_ticks >= 4) {
 		changeState();
 		return;
 	}
+	if (m_ticks == 0)
+		setSize(1);
+	else
+		setSize(1.5*getSize());
 	m_ticks++;
-	setSize(1.5*m_ticks);
 }
 
 //Craft class
@@ -201,15 +204,28 @@ void Villain::flight() {
 	case 1:
 		moveTo(getX() - m_travelSpeed, getY() - m_travelSpeed);
 		break;
-	case 2: 
+	case 2:
 		moveTo(getX() - m_travelSpeed, getY() + m_travelSpeed);
 		break;
 	case 3:
 		moveTo(getX() - m_travelSpeed, getY());
 		break;
 	}
-	if(notSnagg())
+	if (notSnagg())
 		m_flightPath--;
+}
+
+void Villain::actionDuringFlight() {
+	int nachX = getWorld()->getNach()->getX();
+	int nachY = getWorld()->getNach()->getY();
+	if (nachX < getX() && abs(nachY - getY()) <= 4 && abs(nachY - getY()) >= 0) {
+		int rand = randInt(0, ((20 / getWorld()->getLevel()) + 5) - 1);
+		if (rand == 0) {
+			Turnip* t = new Turnip(getX() - 14, nachY, getWorld());
+			getWorld()->addItem(t);
+			getWorld()->playSound(SOUND_ALIEN_SHOOT);
+		}
+	}
 }
 
 Smallgon::Smallgon(int startX, int startY, StudentWorld* world)
@@ -225,6 +241,7 @@ void Smallgon::doSomething() {
 	collision(true);
 	killed();
 	flight();
+	actionDuringFlight();
 	collision(true);
 	killed();
 }

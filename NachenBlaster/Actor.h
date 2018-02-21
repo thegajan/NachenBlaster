@@ -90,6 +90,7 @@ public:
 	virtual int type() { return 2; }
 	virtual int score() { return 250; }
 	void flight();
+	void actionDuringFlight();
 	int getFlightPath() { return m_flightPath; }
 	void setFlightPath(int path) { m_flightPath = path; }
 	double getTravelSpeed() { return m_travelSpeed; }

@@ -21,6 +21,7 @@ public:
 	void addItem(Actor* x) { m_v.push_back(x); }
 	std::vector<Actor*> getActors() { return m_v; }
 	void killVillain() { m_numVillainsDestroyed++; }
+	NachenBlaster* getNach() { return m_nach; }
 private:
 	NachenBlaster* m_nach;
 	std::vector<Actor*> m_v;
