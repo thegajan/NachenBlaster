@@ -5,22 +5,11 @@
 // Students:  Add code to this file, Actor.h, StudentWorld.h, and StudentWorld.cpp
 
 //actor abc
-Actor::Actor(int imageID, int startX, int startY, StudentWorld* world, int startDirection, double size, int depth)
+Actor::Actor(int imageID, int startX, int startY, StudentWorld* world, int damage, int startDirection, double size, int depth)
 	:GraphObject(imageID, startX, startY, startDirection, size, depth)
 {
 	m_world = world;
-}
-
-bool Actor::getState() const {
-	return m_state;
-}
-
-void Actor::changeState() {
-	m_state = false;
-}
-
-StudentWorld* Actor::getWorld() {
-	return m_world;
+	m_damage = damage;
 }
 
 void Actor::offScreen() {
@@ -30,21 +19,43 @@ void Actor::offScreen() {
 }
 
 bool Actor::collide(Actor* p1, Actor* p2) {
-	double x1 = p1->getX();
-	double y1 = p1->getY();
-	double r1 = p1->getRadius();
-	double r2 = p2->getRadius();
-	double x2 = p2->getX();
-	double y2 = p2->getY();
-	double distance = sqrt(pow((x2 - x1), 2) + pow((y2 - y1), 2));
-	if (distance < 0.75*(r1 + r2) && collidable())
-		return true;
+	if (p1->getState() && p2->getState()) {
+		double x1 = p1->getX();
+		double y1 = p1->getY();
+		double r1 = p1->getRadius();
+		double r2 = p2->getRadius();
+		double x2 = p2->getX();
+		double y2 = p2->getY();
+		double distance = sqrt(pow((x2 - x1), 2) + pow((y2 - y1), 2));
+		if (distance < 0.75*(r1 + r2) && collidable())
+			return true;
+	}
 	return false;
+}
+
+bool Actor::collision() {
+		std::vector<Actor*> actors = m_world->getActors();
+		std::vector<Actor*>::iterator it = actors.begin();
+		while (it != actors.end()) {
+			if ((*it)->type() != type() && (*it)->collide(*it, this)) {
+				int health = (*it)->getHealth();
+				(*it)->setHealth(health - m_damage);
+				if (type() == 3)
+					changeState();
+				if((*it)->getHealth() > 0 && (*it)->damageable())
+					m_world->playSound(SOUND_BLAST);
+				else {
+					m_world->playSound(SOUND_DEATH);
+				}
+			}
+			it++;
+		}
+		return true;
 }
 
 //star class
 Star::Star(int startX, int startY, StudentWorld* world)
-	:Actor(IID_STAR, startX, startY, world, 0, .01*randInt(5, 50), 3)
+	:Actor(IID_STAR, startX, startY, world, 0, 0, .01*randInt(5, 50), 3)
 {}
 
 void Star::doSomething() {
@@ -73,8 +84,8 @@ void Explosion::doSomething() {
 }
 
 //Craft class
-Craft::Craft(int imageID, int startX, int startY, StudentWorld* world, int health)
-	:Actor(imageID, startX, startY, world)
+Craft::Craft(int imageID, int startX, int startY, StudentWorld* world, int health, int damage)
+	:Actor(imageID, startX, startY, world, damage)
 {
 	setHealth(health);
 }
@@ -82,12 +93,14 @@ Craft::Craft(int imageID, int startX, int startY, StudentWorld* world, int healt
 void Craft::killed() {
 	if (getHealth() < 0) {
 		changeState();
+		Explosion * e = new Explosion(getX(), getY(), getWorld());
+		getWorld()->addItem(e);
 	}
 }
 
 //nachenblaster class
 NachenBlaster::NachenBlaster(StudentWorld* world)
-	:Craft(IID_NACHENBLASTER, 0, 128, world, 50)
+	:Craft(IID_NACHENBLASTER, 0, 128, world, 50, 100)
 {}
 
 void NachenBlaster::doSomething() {
@@ -130,6 +143,7 @@ void NachenBlaster::doSomething() {
 	}
 	if (m_cabbage < 30)
 		m_cabbage++;
+	collision();
 }
 
 void NachenBlaster::fireCabbage(int x, int y) {
@@ -149,8 +163,8 @@ void NachenBlaster::fireTorpedo(int x, int y) {
 }
 
 //Villian class
-Villain::Villain(int imageID, int startX, int startY, StudentWorld* world, int health, double travelSpeed, int flightPath)
-	:Craft(imageID, startX, startY, world, health)
+Villain::Villain(int imageID, int startX, int startY, StudentWorld* world, int health, double travelSpeed, int flightPath, int damage)
+	:Craft(imageID, startX, startY, world, health, damage)
 {
 	m_travelSpeed = travelSpeed;
 	m_flightPath = flightPath;
@@ -161,7 +175,7 @@ void Villain::getHit() {
 }
 
 Smallgon::Smallgon(int startX, int startY, StudentWorld* world)
-	:Villain(IID_SMALLGON, startX, startY, world, 5 * (1 + (world->getLevel() - 1)*0.1), 2.0, 0)
+	:Villain(IID_SMALLGON, startX, startY, world, 5 * (1 + (world->getLevel() - 1)*0.1), 2.0, 0, 5)
 {}
 
 void Smallgon::doSomething() {
@@ -170,11 +184,12 @@ void Smallgon::doSomething() {
 	offScreen();
 	if (!getState())
 		return;
+	collision();
 	killed();
 }
 
 Smoregon::Smoregon(int startX, int startY, StudentWorld* world)
-	:Villain(IID_SMOREGON, startX, startY, world, 5 * (1 + (world->getLevel() - 1)*0.1), 2.0, 0)
+	:Villain(IID_SMOREGON, startX, startY, world, 5 * (1 + (world->getLevel() - 1)*0.1), 2.0, 0, 5)
 {}
 
 void Smoregon::doSomething() {
@@ -183,11 +198,12 @@ void Smoregon::doSomething() {
 	offScreen();
 	if (!getState())
 		return;
+	collision();
 	killed();
 }
 
 Snagglegon::Snagglegon(int startX, int startY, StudentWorld* world)
-	:Villain(IID_SNAGGLEGON, startX, startY, world, 10 * (1 + (world->getLevel() - 1)*0.1), 2.0, 0)
+	:Villain(IID_SNAGGLEGON, startX, startY, world, 10 * (1 + (world->getLevel() - 1)*0.1), 2.0, 0, 15)
 {}
 
 void Snagglegon::doSomething() {
@@ -196,35 +212,38 @@ void Snagglegon::doSomething() {
 	offScreen();
 	if (!getState())
 		return;
+	collision();
 	killed();
 }
 
 //projectile class
-Projectile::Projectile(int imageID, int startX, int startY, StudentWorld* world, int startDirection)
-	:Actor(imageID, startX, startY, world, startDirection, 0.5, 1)
+Projectile::Projectile(int imageID, int startX, int startY, StudentWorld* world, int startDirection, int damage)
+	:Actor(imageID, startX, startY, world, damage, startDirection, 0.5, 1)
 {}
 
-void Projectile::collideWithCraft(int damage, bool targetBad) {
-	StudentWorld* world = getWorld();
-	std::vector<Actor*> actors = world->getActors();
-	std::vector<Actor*>::iterator it = actors.begin();
-	while (it != actors.end()) {
-		if ((*it)->getState() && (*it)->collide(*it, this)) {
-			int health = (*it)->getHealth();
-			(*it)->setHealth(health - damage);
-			this->changeState();
-			if((*it)->getHealth() > 0)
-				world->playSound(SOUND_BLAST);
-			else
-				world->playSound(SOUND_DEATH);
-		}
-		it++;
-	}
-}
+//void Projectile::collideWithCraft(int damage, bool targetBad) {
+//	StudentWorld* world = getWorld();
+//	std::vector<Actor*> actors = world->getActors();
+//	std::vector<Actor*>::iterator it = actors.begin();
+//	while (it != actors.end()) {
+//		if ((*it)->getState() && (*it)->collide(*it, this)) {
+//			int health = (*it)->getHealth();
+//			(*it)->setHealth(health - damage);
+//			this->changeState();
+//			if((*it)->getHealth() > 0)
+//				world->playSound(SOUND_BLAST);
+//			else {
+//				if (targetBad)
+//					world->playSound(SOUND_DEATH);
+//			}
+//		}
+//		it++;
+//	}
+//}
 
 //cabbage class
 Cabbage::Cabbage(int startX, int startY, StudentWorld* world)
-	: Projectile(IID_CABBAGE, startX, startY, world)
+	: Projectile(IID_CABBAGE, startX, startY, world, 0, 2)
 {}
 
 void Cabbage::doSomething() {
@@ -233,7 +252,8 @@ void Cabbage::doSomething() {
 	offScreen();
 	if (!getState())
 		return;
-	collideWithCraft(2, true);
+	//collideWithCraft(2, true);
+	collision();
 	int x = getX(), y = getY();
 	moveTo(x + 8, y);
 	int d = getDirection();
@@ -242,7 +262,7 @@ void Cabbage::doSomething() {
 
 //torpedo class
 Torpedo::Torpedo(int startX, int startY, StudentWorld* world)
-	:Projectile(IID_TORPEDO, startX, startY, world)
+	:Projectile(IID_TORPEDO, startX, startY, world, 0, 8)
 {}
 
 void Torpedo::doSomething() {

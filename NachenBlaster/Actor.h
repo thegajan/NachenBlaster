@@ -8,21 +8,26 @@ class StudentWorld;
 // Students:  Add code to this file, Actor.cpp, StudentWorld.h, and StudentWorld.cpp
 class Actor : public GraphObject {
 public:
-	Actor(int imageID, int startX, int startY, StudentWorld* world, int startDirection = 0, double size = 1.0, int depth = 0);
+	Actor(int imageID, int startX, int startY, StudentWorld* world, int damage = 0, int startDirection = 0, double size = 1.0, int depth = 0);
 	virtual ~Actor() {}
 	virtual void doSomething() = 0;
-	bool getState() const;
-	void changeState();
-	StudentWorld* getWorld();
+	bool getState() {return m_state; }
+	void changeState() { m_state = false; }
+	StudentWorld* getWorld() { return m_world; }
 	virtual void offScreen();
-	bool collide(Actor* p1, Actor* p2);
-	virtual bool collidable() { return true; }
+	bool collide(Actor* p1, Actor* p2); //check to see if collision is occuring
+	virtual bool collidable() { return true; } //check to see if object can collide with other objects
+	bool collision(); //call to proccess collision
 	virtual bool isEvil() { return false; }
 	int getHealth() { return m_health; }
 	void setHealth(int health) { m_health = health; }
 	virtual bool isNach() { return false; }
+	int getDamage() { return m_damage; }
+	virtual bool damageable()	{ return false; }
+	virtual int type() { return 0; }
 private:
-	int m_health;
+	int m_damage;
+	int m_health = 0;
 	bool m_state = true;
 	StudentWorld* m_world;
 };
@@ -47,11 +52,12 @@ private:
 //Craft class
 class Craft : public Actor {
 public:
-	Craft(int imageID, int startX, int startY, StudentWorld* world, int health);
+	Craft(int imageID, int startX, int startY, StudentWorld* world, int health, int damage);
 	virtual ~Craft() {}
 	virtual void doSomething() = 0;
 	virtual void getHit() = 0;
 	virtual void killed();
+	virtual bool damageable() { return true; }
 };
 
 //NachenBlaster class
@@ -67,6 +73,7 @@ public:
 	int getTorpedo() { return m_torpedo; }
 	virtual void getHit() {}
 	virtual bool isNach() { return true; }
+	virtual int type() { return 1; }
 private:
 	int m_cabbage = 30;
 	int m_torpedo = 0;
@@ -75,11 +82,12 @@ private:
 //villian class
 class Villain : public Craft {
 public:
-	Villain(int imageID, int startX, int startY, StudentWorld* world, int health, double travelSpeed, int flightPath);
+	Villain(int imageID, int startX, int startY, StudentWorld* world, int health, double travelSpeed, int flightPath, int damage);
 	virtual ~Villain() {}
 	virtual void doSomething() = 0;
 	virtual bool isEvil() { return true; }
 	virtual void getHit();
+	virtual int type() { return 2; }
 private:
 	double m_travelSpeed;
 	int m_flightPath;
@@ -110,10 +118,11 @@ public:
 
 class Projectile : public Actor {
 public:
-	Projectile(int imageID, int startX, int startY, StudentWorld* world, int startDirection = 0);
+	Projectile(int imageID, int startX, int startY, StudentWorld* world, int startDirection = 0, int damage = 0);
 	virtual ~Projectile() {};
-	virtual void collideWithCraft(int damage, bool targetBad);
+	//virtual void collideWithCraft(int damage, bool targetBad);
 	virtual bool collidable() { return false; }
+	virtual int type() { return 3; }
 };
 
 //cabbage class

@@ -24,7 +24,7 @@ private:
 	NachenBlaster* m_nach;
 	std::vector<Actor*> m_v;
 	int m_numVillains;
-	int m_numVillainsDestroyed = 0;
+	int m_numVillainsDestroyed;
 };
 
 #endif // STUDENTWORLD_H_

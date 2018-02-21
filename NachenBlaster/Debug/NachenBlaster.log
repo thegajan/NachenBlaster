@@ -1,14 +1,3 @@
 ﻿  StudentWorld.cpp
-c:\gajan\school\ucla\freshman\winter\cs32\projects\nachenblaster\nachenblaster\studentworld.cpp(90): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-  Actor.cpp
-c:\gajan\school\ucla\freshman\winter\cs32\projects\nachenblaster\nachenblaster\actor.cpp(27): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-c:\gajan\school\ucla\freshman\winter\cs32\projects\nachenblaster\nachenblaster\actor.cpp(53): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-c:\gajan\school\ucla\freshman\winter\cs32\projects\nachenblaster\nachenblaster\actor.cpp(54): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-c:\gajan\school\ucla\freshman\winter\cs32\projects\nachenblaster\nachenblaster\actor.cpp(103): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-c:\gajan\school\ucla\freshman\winter\cs32\projects\nachenblaster\nachenblaster\actor.cpp(164): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-c:\gajan\school\ucla\freshman\winter\cs32\projects\nachenblaster\nachenblaster\actor.cpp(177): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-c:\gajan\school\ucla\freshman\winter\cs32\projects\nachenblaster\nachenblaster\actor.cpp(190): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-c:\gajan\school\ucla\freshman\winter\cs32\projects\nachenblaster\nachenblaster\actor.cpp(237): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-c:\gajan\school\ucla\freshman\winter\cs32\projects\nachenblaster\nachenblaster\actor.cpp(254): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-  Generating Code...
+c:\gajan\school\ucla\freshman\winter\cs32\projects\nachenblaster\nachenblaster\studentworld.cpp(92): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
   NachenBlaster.vcxproj -> C:\Gajan\School\UCLA\Freshman\Winter\CS32\Projects\NachenBlaster\Debug\NachenBlaster.exe

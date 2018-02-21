@@ -13,9 +13,7 @@ GameWorld* createStudentWorld(string assetDir)
 
 StudentWorld::StudentWorld(string assetDir)
 	: GameWorld(assetDir)
-{
-	m_numVillains = 6 + (4 * getLevel());
-}
+{}
 
 StudentWorld::~StudentWorld() {
 	cleanUp();
@@ -24,6 +22,8 @@ StudentWorld::~StudentWorld() {
 int StudentWorld::init()
 {
 	//create 30 stars
+	m_numVillains = 6 + (4 * getLevel());
+	m_numVillainsDestroyed = 0;
 	m_nach = new NachenBlaster(this);
 	addItem(m_nach);
 	for (int i = 0; i < 30; i++) {
@@ -54,14 +54,15 @@ int StudentWorld::move()
 		else
 			n++;
 	}
+	newItem();
 	m_nach->doSomething();
+	displayStatus();
 	if (m_nach->getHealth() <= 0) {
+		decLives();
 		return GWSTATUS_PLAYER_DIED;
 	}
 	if (m_numVillainsDestroyed >= m_numVillains)
 		return GWSTATUS_FINISHED_LEVEL;
-	newItem();
-	displayStatus();
 	return GWSTATUS_CONTINUE_GAME;
 }
 
@@ -69,6 +70,7 @@ void StudentWorld::cleanUp()
 {
 	vector<Actor*>::iterator i = m_v.begin();
 	while (i != m_v.end()) {
+		
 		delete *i;
 		i = m_v.erase(i);
 	}
