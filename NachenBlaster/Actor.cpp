@@ -33,20 +33,29 @@ bool Actor::collide(Actor* p1, Actor* p2) {
 	return false;
 }
 
-bool Actor::collision() {
+bool Actor::collision(bool evil) {
 		std::vector<Actor*> actors = m_world->getActors();
 		std::vector<Actor*>::iterator it = actors.begin();
 		while (it != actors.end()) {
 			if ((*it)->type() != type() && (*it)->collide(*it, this)) {
+				//prevent good from shooting good and bad from shooting bad
+				//if (evil && !(*it)->isEvil()) {
+				//	it++;
+				//	continue;
+				//}
+				//if (!evil && !(*it)->isEvil()) {
+				//	it++;
+				//	continue;
+				//}
 				int health = (*it)->getHealth();
 				(*it)->setHealth(health - m_damage);
 				if (type() == 3)
 					changeState();
-				if ((*it)->isEvil())
-					m_world->killVillain();
 				if((*it)->getHealth() > 0 && (*it)->damageable())
 					m_world->playSound(SOUND_BLAST);
 				else {
+					if ((*it)->isEvil())
+						m_world->killVillain();
 					m_world->playSound(SOUND_DEATH);
 					m_world->increaseScore((*it)->score());
 				}
@@ -146,7 +155,7 @@ void NachenBlaster::doSomething() {
 	}
 	if (m_cabbage < 30)
 		m_cabbage++;
-	collision();
+	collision(false);
 }
 
 void NachenBlaster::fireCabbage(int x, int y) {
@@ -161,7 +170,7 @@ void NachenBlaster::fireTorpedo(int x, int y) {
 	m_torpedo--;
 	StudentWorld* world = getWorld();
 	getWorld()->playSound(SOUND_TORPEDO);
-	Torpedo* t = new Torpedo(x + 12, y, world);
+	Torpedo* t = new Torpedo(x + 12, y, world, false);
 	world->addItem(t);
 }
 
@@ -174,6 +183,7 @@ Villain::Villain(int imageID, int startX, int startY, StudentWorld* world, int h
 }
 
 void Villain::flight() {
+	//return; //HERE FOR DEBUGING TO PREVENT VILLAINS FROM FLIGHING, COMMENT THIS OUT
 	if (m_flightPath == 0 && notSnagg()) {
 		m_travelDir = randInt(1, 3);
 		m_flightPath = randInt(1, 32);
@@ -212,10 +222,10 @@ void Smallgon::doSomething() {
 	offScreen();
 	if (!getState())
 		return;
-	collision();
+	collision(true);
 	killed();
 	flight();
-	collision();
+	collision(true);
 	killed();
 }
 
@@ -229,10 +239,10 @@ void Smoregon::doSomething() {
 	offScreen();
 	if (!getState())
 		return;
-	collision();
+	collision(true);
 	killed();
 	flight();
-	collision();
+	collision(true);
 	killed();
 }
 
@@ -248,41 +258,21 @@ void Snagglegon::doSomething() {
 	offScreen();
 	if (!getState())
 		return;
-	collision();
+	collision(true);
 	killed();
 	flight();
-	collision();
+	collision(true);
 	killed();
 }
 
 //projectile class
-Projectile::Projectile(int imageID, int startX, int startY, StudentWorld* world, int startDirection, int damage)
+Projectile::Projectile(int imageID, int startX, int startY, StudentWorld* world, bool side, int startDirection, int damage)
 	:Actor(imageID, startX, startY, world, damage, startDirection, 0.5, 1)
 {}
 
-//void Projectile::collideWithCraft(int damage, bool targetBad) {
-//	StudentWorld* world = getWorld();
-//	std::vector<Actor*> actors = world->getActors();
-//	std::vector<Actor*>::iterator it = actors.begin();
-//	while (it != actors.end()) {
-//		if ((*it)->getState() && (*it)->collide(*it, this)) {
-//			int health = (*it)->getHealth();
-//			(*it)->setHealth(health - damage);
-//			this->changeState();
-//			if((*it)->getHealth() > 0)
-//				world->playSound(SOUND_BLAST);
-//			else {
-//				if (targetBad)
-//					world->playSound(SOUND_DEATH);
-//			}
-//		}
-//		it++;
-//	}
-//}
-
 //cabbage class
 Cabbage::Cabbage(int startX, int startY, StudentWorld* world)
-	: Projectile(IID_CABBAGE, startX, startY, world, 0, 2)
+	: Projectile(IID_CABBAGE, startX, startY, world, false, 0, 2)
 {}
 
 void Cabbage::doSomething() {
@@ -291,17 +281,34 @@ void Cabbage::doSomething() {
 	offScreen();
 	if (!getState())
 		return;
-	//collideWithCraft(2, true);
-	collision();
+	collision(false);
 	int x = getX(), y = getY();
 	moveTo(x + 8, y);
 	int d = getDirection();
 	setDirection(d + 20);
 }
 
+//turnip class
+Turnip::Turnip(int startX, int startY, StudentWorld* world)
+	:Projectile(IID_TURNIP, startX, startY, world, true, 0, 2)
+{}
+
+void Turnip::doSomething() {
+	if (!getState())
+		return;
+	offScreen();
+	if (!getState())
+		return;
+	collision(true);
+	int x = getX(), y = getY();
+	moveTo(x - 6, y);
+	int d = getDirection();
+	setDirection(d + 20);
+}
+
 //torpedo class
-Torpedo::Torpedo(int startX, int startY, StudentWorld* world)
-	:Projectile(IID_TORPEDO, startX, startY, world, 0, 8)
+Torpedo::Torpedo(int startX, int startY, StudentWorld* world, bool side)
+	:Projectile(IID_TORPEDO, startX, startY, world, side, 0, 8)
 {}
 
 void Torpedo::doSomething() {
@@ -311,5 +318,8 @@ void Torpedo::doSomething() {
 	if (!getState())
 		return;
 	int x = getX(), y = getY();
-	moveTo(x + 8, y);
+	if (isEvil() == true)
+		moveTo(x - 8, y);
+	else
+		moveTo(x + 8, y);
 }

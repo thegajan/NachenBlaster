@@ -125,6 +125,7 @@ void StudentWorld::displayStatus() {
 	oss << healthPerc << "%  Score: " << getScore() << "  Level: " << getLevel() << "  Cabbages: ";
 	int cabbages = (m_nach->getCabbage() * 100) / 30;
 	oss << cabbages << "%  Torpedoes: " << m_nach->getTorpedo();
+	//oss << "Bad Killed:" << m_numVillainsDestroyed; //REMOVE ONLY FOR DEBUGGIN PURPOSES
 	string output = oss.str();
 	setGameStatText(output);
 }

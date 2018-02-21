@@ -17,7 +17,7 @@ public:
 	virtual void offScreen();
 	bool collide(Actor* p1, Actor* p2); //check to see if collision is occuring
 	virtual bool collidable() { return true; } //check to see if object can collide with other objects
-	bool collision(); //call to proccess collision
+	bool collision(bool isEvil); //call to proccess collision
 	virtual bool isEvil() { return false; }
 	int getHealth() { return m_health; }
 	void setHealth(int health) { m_health = health; }
@@ -130,11 +130,14 @@ public:
 
 class Projectile : public Actor {
 public:
-	Projectile(int imageID, int startX, int startY, StudentWorld* world, int startDirection = 0, int damage = 0);
+	Projectile(int imageID, int startX, int startY, StudentWorld* world, bool side, int startDirection = 0, int damage = 0);
 	virtual ~Projectile() {};
 	//virtual void collideWithCraft(int damage, bool targetBad);
 	virtual bool collidable() { return false; }
 	virtual int type() { return 3; }
+	virtual bool isEvil() { return m_side; }
+private:
+	bool m_side;
 };
 
 //cabbage class
@@ -146,10 +149,18 @@ public:
 	virtual void doSomething();
 };
 
+//turnip class
+class Turnip :public Projectile {
+public:
+	Turnip(int startX, int startY, StudentWorld* world);
+	virtual ~Turnip() {};
+	virtual void doSomething();
+};
+
 //torpedo class
 class Torpedo : public Projectile {
 public:
-	Torpedo(int startX, int startY, StudentWorld* world);
+	Torpedo(int startX, int startY, StudentWorld* world, bool side);
 	virtual ~Torpedo() {}
 	virtual void doSomething();
 };
