@@ -23,7 +23,7 @@ public:
 	void killVillain() { m_numVillainsDestroyed++; }
 	NachenBlaster* getNach() { return m_nach; }
 private:
-	NachenBlaster* m_nach;
+	NachenBlaster * m_nach;
 	std::vector<Actor*> m_v;
 	int m_numVillains;
 	int m_numVillainsDestroyed;

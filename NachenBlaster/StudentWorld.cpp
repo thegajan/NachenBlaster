@@ -72,7 +72,7 @@ void StudentWorld::cleanUp()
 {
 	vector<Actor*>::iterator i = m_v.begin();
 	while (i != m_v.end()) {
-		
+
 		delete *i;
 		i = m_v.erase(i);
 	}

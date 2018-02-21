@@ -11,7 +11,7 @@ public:
 	Actor(int imageID, int startX, int startY, StudentWorld* world, int damage = 0, int startDirection = 0, double size = 1.0, int depth = 0);
 	virtual ~Actor() {}
 	virtual void doSomething() = 0;
-	bool getState() {return m_state; }
+	bool getState() { return m_state; }
 	void changeState() { m_state = false; }
 	StudentWorld* getWorld() { return m_world; }
 	virtual void offScreen();
@@ -23,7 +23,7 @@ public:
 	void setHealth(int health) { m_health = health; }
 	virtual bool isNach() { return false; }
 	int getDamage() { return m_damage; }
-	virtual bool damageable()	{ return false; }
+	virtual bool damageable() { return false; }
 	virtual int type() { return 0; }
 	virtual int score() { return 0; }
 private:
@@ -68,8 +68,7 @@ public:
 	NachenBlaster(StudentWorld* world);
 	virtual ~NachenBlaster() {}
 	virtual void doSomething();
-	void fireCabbage(int x, int y);
-	void fireTorpedo(int x, int y);
+	void fire(int x, int y, int type);
 	int getCabbage() { return m_cabbage; }
 	int getTorpedo() { return m_torpedo; }
 	//virtual void getHit() {}
@@ -89,15 +88,17 @@ public:
 	virtual bool isEvil() { return true; }
 	virtual int type() { return 2; }
 	virtual int score() { return 250; }
-	void flight();
-	void actionDuringFlight();
+	void flightPath();
+	void fly();
+	bool actionDuringFlight();
 	int getFlightPath() { return m_flightPath; }
 	void setFlightPath(int path) { m_flightPath = path; }
 	double getTravelSpeed() { return m_travelSpeed; }
-	double setTravelSpeed(int speed) { m_travelSpeed = speed; }
+	void setTravelSpeed(int speed) { m_travelSpeed = speed; }
 	int getTravelDir() { return m_travelDir; }
 	void changeTravelDir(int travelDir) { m_travelDir = travelDir; }
 	virtual bool notSnagg() { return true; }
+	virtual bool smoregon() { return false; }
 private:
 	double m_travelSpeed;
 	int m_flightPath;
@@ -116,6 +117,7 @@ public:
 	Smoregon(int startX, int startY, StudentWorld* world);
 	virtual ~Smoregon() {}
 	virtual void doSomething();
+	virtual bool smoregon() { return true; }
 };
 
 class Snagglegon : public Villain {

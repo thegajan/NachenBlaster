@@ -34,7 +34,7 @@ bool Actor::collide(Actor* p1, Actor* p2) {
 }
 
 bool Actor::collision(bool evil) {
-	std::vector<Actor*> actors = m_world->getActors();
+	std::vector<Actor*> actors = m_world->getActors(); // change this
 	std::vector<Actor*>::iterator it = actors.begin();
 	while (it != actors.end()) {
 		if ((*it)->type() != type() && (*it)->collide(*it, this)) {
@@ -148,11 +148,11 @@ void NachenBlaster::doSomething() {
 			break;
 		case KEY_PRESS_SPACE:
 			if (m_cabbage >= 5)
-				fireCabbage(x, y);
+				fire(x, y, 0);
 			break;
 		case KEY_PRESS_TAB:
 			if (m_torpedo >= 1)
-				fireTorpedo(x, y);
+				fire(x, y, 1);
 			break;
 		}
 	}
@@ -161,20 +161,17 @@ void NachenBlaster::doSomething() {
 	collision(false);
 }
 
-void NachenBlaster::fireCabbage(int x, int y) {
-	m_cabbage = m_cabbage - 5;
-	StudentWorld* world = getWorld();
-	getWorld()->playSound(SOUND_PLAYER_SHOOT);
-	Cabbage* c = new Cabbage(x + 12, y, world);
-	world->addItem(c);
-}
-
-void NachenBlaster::fireTorpedo(int x, int y) {
-	m_torpedo--;
-	StudentWorld* world = getWorld();
-	getWorld()->playSound(SOUND_TORPEDO);
-	Torpedo* t = new Torpedo(x + 12, y, world, false);
-	world->addItem(t);
+void NachenBlaster::fire(int x, int y, int type) {
+	Projectile* p;
+	if (type == 0) {
+		m_cabbage = m_cabbage - 5;
+		p = new Cabbage(x + 12, y, getWorld());
+	}
+	else if (type == 1) {
+		m_torpedo--;
+		p = new Torpedo(x + 12, y, getWorld(), false);
+	}
+	getWorld()->addItem(p);
 }
 
 //Villian class
@@ -185,7 +182,7 @@ Villain::Villain(int imageID, int startX, int startY, StudentWorld* world, int h
 	m_flightPath = flightPath;
 }
 
-void Villain::flight() {
+void Villain::flightPath() {
 	//return; //HERE FOR DEBUGING TO PREVENT VILLAINS FROM FLIGHING, COMMENT THIS OUT
 	if (m_flightPath == 0 && notSnagg()) {
 		m_travelDir = randInt(1, 3);
@@ -199,6 +196,10 @@ void Villain::flight() {
 		m_travelDir = 1;
 		m_flightPath = randInt(1, 32);
 	}
+}
+
+void Villain::fly() {
+	return;
 	switch (m_travelDir)
 	{
 	case 1:
@@ -215,17 +216,32 @@ void Villain::flight() {
 		m_flightPath--;
 }
 
-void Villain::actionDuringFlight() {
+bool Villain::actionDuringFlight() {
 	int nachX = getWorld()->getNach()->getX();
 	int nachY = getWorld()->getNach()->getY();
 	if (nachX < getX() && abs(nachY - getY()) <= 4 && abs(nachY - getY()) >= 0) {
 		int rand = randInt(0, ((20 / getWorld()->getLevel()) + 5) - 1);
-		if (rand == 0) {
+		int rand2 = randInt(0, (((15 / getWorld()->getLevel()) + 10) - 1));
+		if (rand == 0 && notSnagg()) {
 			Turnip* t = new Turnip(getX() - 14, nachY, getWorld());
 			getWorld()->addItem(t);
 			getWorld()->playSound(SOUND_ALIEN_SHOOT);
+			return true;
+		}
+		if (rand == 1 && smoregon()) {
+			changeTravelDir(3);
+			setFlightPath(VIEW_WIDTH);
+			setTravelSpeed(5);
+			return false;
+		}
+		if (rand2 == 0 && !notSnagg()) {
+			Torpedo* t = new Torpedo(getX() - 14, getY(), getWorld(), true);
+			getWorld()->addItem(t);
+			getWorld()->playSound(SOUND_TORPEDO);
+			return true;
 		}
 	}
+	return false;
 }
 
 Smallgon::Smallgon(int startX, int startY, StudentWorld* world)
@@ -240,8 +256,9 @@ void Smallgon::doSomething() {
 		return;
 	collision(true);
 	killed();
-	flight();
-	actionDuringFlight();
+	flightPath();
+	if (!actionDuringFlight())
+		fly();
 	collision(true);
 	killed();
 }
@@ -258,7 +275,9 @@ void Smoregon::doSomething() {
 		return;
 	collision(true);
 	killed();
-	flight();
+	flightPath();
+	if (!actionDuringFlight())
+		fly();
 	collision(true);
 	killed();
 }
@@ -277,7 +296,9 @@ void Snagglegon::doSomething() {
 		return;
 	collision(true);
 	killed();
-	flight();
+	flightPath();
+	if (!actionDuringFlight())
+		fly();
 	collision(true);
 	killed();
 }
@@ -285,7 +306,9 @@ void Snagglegon::doSomething() {
 //projectile class
 Projectile::Projectile(int imageID, int startX, int startY, StudentWorld* world, bool side, int startDirection, int damage)
 	:Actor(imageID, startX, startY, world, damage, startDirection, 0.5, 1)
-{}
+{
+	m_side = side;
+}
 
 //cabbage class
 Cabbage::Cabbage(int startX, int startY, StudentWorld* world)
