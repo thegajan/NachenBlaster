@@ -25,6 +25,7 @@ public:
 	int getDamage() { return m_damage; }
 	virtual bool damageable()	{ return false; }
 	virtual int type() { return 0; }
+	virtual int score() { return 0; }
 private:
 	int m_damage;
 	int m_health = 0;
@@ -52,10 +53,10 @@ private:
 //Craft class
 class Craft : public Actor {
 public:
-	Craft(int imageID, int startX, int startY, StudentWorld* world, int health, int damage);
+	Craft(int imageID, int startX, int startY, StudentWorld* world, int health, int damage, double size, int depth);
 	virtual ~Craft() {}
 	virtual void doSomething() = 0;
-	virtual void getHit() = 0;
+	//virtual void getHit() = 0;
 	virtual void killed();
 	virtual bool damageable() { return true; }
 };
@@ -71,7 +72,7 @@ public:
 	void fireTorpedo(int x, int y);
 	int getCabbage() { return m_cabbage; }
 	int getTorpedo() { return m_torpedo; }
-	virtual void getHit() {}
+	//virtual void getHit() {}
 	virtual bool isNach() { return true; }
 	virtual int type() { return 1; }
 private:
@@ -86,11 +87,20 @@ public:
 	virtual ~Villain() {}
 	virtual void doSomething() = 0;
 	virtual bool isEvil() { return true; }
-	virtual void getHit();
 	virtual int type() { return 2; }
+	virtual int score() { return 250; }
+	void flight();
+	int getFlightPath() { return m_flightPath; }
+	void setFlightPath(int path) { m_flightPath = path; }
+	double getTravelSpeed() { return m_travelSpeed; }
+	double setTravelSpeed(int speed) { m_travelSpeed = speed; }
+	int getTravelDir() { return m_travelDir; }
+	void changeTravelDir(int travelDir) { m_travelDir = travelDir; }
+	virtual bool notSnagg() { return true; }
 private:
 	double m_travelSpeed;
 	int m_flightPath;
+	int m_travelDir; //1 = dl, 2 = ul, 3 = l
 };
 
 class Smallgon : public Villain {
@@ -112,6 +122,8 @@ public:
 	Snagglegon(int startX, int startY, StudentWorld* world);
 	virtual ~Snagglegon() {}
 	virtual void doSomething();
+	virtual int score() { return 1000; }
+	virtual bool notSnagg() { return false; }
 };
 
 //class projectile

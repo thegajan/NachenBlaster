@@ -42,10 +42,13 @@ bool Actor::collision() {
 				(*it)->setHealth(health - m_damage);
 				if (type() == 3)
 					changeState();
+				if ((*it)->isEvil())
+					m_world->killVillain();
 				if((*it)->getHealth() > 0 && (*it)->damageable())
 					m_world->playSound(SOUND_BLAST);
 				else {
 					m_world->playSound(SOUND_DEATH);
+					m_world->increaseScore((*it)->score());
 				}
 			}
 			it++;
@@ -79,13 +82,13 @@ void Explosion::doSomething() {
 		changeState();
 		return;
 	}
-	setSize(1.5*getSize());
 	m_ticks++;
+	setSize(1.5*m_ticks);
 }
 
 //Craft class
-Craft::Craft(int imageID, int startX, int startY, StudentWorld* world, int health, int damage)
-	:Actor(imageID, startX, startY, world, damage)
+Craft::Craft(int imageID, int startX, int startY, StudentWorld* world, int health, int damage, double size, int depth)
+	:Actor(imageID, startX, startY, world, damage, 0, size, depth)
 {
 	setHealth(health);
 }
@@ -100,7 +103,7 @@ void Craft::killed() {
 
 //nachenblaster class
 NachenBlaster::NachenBlaster(StudentWorld* world)
-	:Craft(IID_NACHENBLASTER, 0, 128, world, 50, 100)
+	:Craft(IID_NACHENBLASTER, 0, 128, world, 50, 100, 1, 0)
 {}
 
 void NachenBlaster::doSomething() {
@@ -164,14 +167,39 @@ void NachenBlaster::fireTorpedo(int x, int y) {
 
 //Villian class
 Villain::Villain(int imageID, int startX, int startY, StudentWorld* world, int health, double travelSpeed, int flightPath, int damage)
-	:Craft(imageID, startX, startY, world, health, damage)
+	:Craft(imageID, startX, startY, world, health, damage, 1.5, 1)
 {
 	m_travelSpeed = travelSpeed;
 	m_flightPath = flightPath;
 }
 
-void Villain::getHit() {
-
+void Villain::flight() {
+	if (m_flightPath == 0 && notSnagg()) {
+		m_travelDir = randInt(1, 3);
+		m_flightPath = randInt(1, 32);
+	}
+	else if (getY() - m_travelSpeed <= 0) {
+		m_travelDir = 2;
+		m_flightPath = randInt(1, 32);
+	}
+	else if (getY() + m_travelSpeed >= VIEW_HEIGHT - 1) {
+		m_travelDir = 1;
+		m_flightPath = randInt(1, 32);
+	}
+	switch (m_travelDir)
+	{
+	case 1:
+		moveTo(getX() - m_travelSpeed, getY() - m_travelSpeed);
+		break;
+	case 2: 
+		moveTo(getX() - m_travelSpeed, getY() + m_travelSpeed);
+		break;
+	case 3:
+		moveTo(getX() - m_travelSpeed, getY());
+		break;
+	}
+	if(notSnagg())
+		m_flightPath--;
 }
 
 Smallgon::Smallgon(int startX, int startY, StudentWorld* world)
@@ -184,6 +212,9 @@ void Smallgon::doSomething() {
 	offScreen();
 	if (!getState())
 		return;
+	collision();
+	killed();
+	flight();
 	collision();
 	killed();
 }
@@ -200,11 +231,16 @@ void Smoregon::doSomething() {
 		return;
 	collision();
 	killed();
+	flight();
+	collision();
+	killed();
 }
 
 Snagglegon::Snagglegon(int startX, int startY, StudentWorld* world)
-	:Villain(IID_SNAGGLEGON, startX, startY, world, 10 * (1 + (world->getLevel() - 1)*0.1), 2.0, 0, 15)
-{}
+	:Villain(IID_SNAGGLEGON, startX, startY, world, 10 * (1 + (world->getLevel() - 1)*0.1), 1.75, 0, 15)
+{
+	changeTravelDir(1);
+}
 
 void Snagglegon::doSomething() {
 	if (!getState())
@@ -212,6 +248,9 @@ void Snagglegon::doSomething() {
 	offScreen();
 	if (!getState())
 		return;
+	collision();
+	killed();
+	flight();
 	collision();
 	killed();
 }

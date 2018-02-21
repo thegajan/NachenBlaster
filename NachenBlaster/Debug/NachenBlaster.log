@@ -1,3 +1,12 @@
-﻿  StudentWorld.cpp
-c:\gajan\school\ucla\freshman\winter\cs32\projects\nachenblaster\nachenblaster\studentworld.cpp(92): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+﻿  Actor.cpp
+c:\gajan\school\ucla\freshman\winter\cs32\projects\nachenblaster\nachenblaster\actor.cpp(16): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+c:\gajan\school\ucla\freshman\winter\cs32\projects\nachenblaster\nachenblaster\actor.cpp(67): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+c:\gajan\school\ucla\freshman\winter\cs32\projects\nachenblaster\nachenblaster\actor.cpp(68): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+c:\gajan\school\ucla\freshman\winter\cs32\projects\nachenblaster\nachenblaster\actor.cpp(99): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+c:\gajan\school\ucla\freshman\winter\cs32\projects\nachenblaster\nachenblaster\actor.cpp(119): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+c:\gajan\school\ucla\freshman\winter\cs32\projects\nachenblaster\nachenblaster\actor.cpp(206): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+c:\gajan\school\ucla\freshman\winter\cs32\projects\nachenblaster\nachenblaster\actor.cpp(223): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+c:\gajan\school\ucla\freshman\winter\cs32\projects\nachenblaster\nachenblaster\actor.cpp(240): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+c:\gajan\school\ucla\freshman\winter\cs32\projects\nachenblaster\nachenblaster\actor.cpp(296): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+c:\gajan\school\ucla\freshman\winter\cs32\projects\nachenblaster\nachenblaster\actor.cpp(313): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
   NachenBlaster.vcxproj -> C:\Gajan\School\UCLA\Freshman\Winter\CS32\Projects\NachenBlaster\Debug\NachenBlaster.exe

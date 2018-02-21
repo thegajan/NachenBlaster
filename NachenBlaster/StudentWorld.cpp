@@ -46,8 +46,8 @@ int StudentWorld::move()
 	for (vector<Actor*>::size_type n = 0; n < m_v.size();) {
 		m_v[n]->doSomething();
 		if (!(m_v[n]->getState())) {
-			if (m_v[n]->isEvil())
-				m_numVillainsDestroyed++;
+			//if (m_v[n]->isEvil())
+			//	m_numVillainsDestroyed++;
 			delete m_v[n];
 			m_v.erase(m_v.begin() + n);
 		}
@@ -61,8 +61,10 @@ int StudentWorld::move()
 		decLives();
 		return GWSTATUS_PLAYER_DIED;
 	}
-	if (m_numVillainsDestroyed >= m_numVillains)
+	if (m_numVillainsDestroyed >= m_numVillains) {
+		playSound(SOUND_FINISHED_LEVEL);
 		return GWSTATUS_FINISHED_LEVEL;
+	}
 	return GWSTATUS_CONTINUE_GAME;
 }
 
