@@ -34,14 +34,7 @@ static const int WINDOW_WIDTH = 768; //1024;
 static const int WINDOW_HEIGHT = 768;
 
 static const int PERSPECTIVE_NEAR_PLANE = 4;
-static const int PERSPECTIVE_FAR_PLANE	= 22;
-
-static const double VISIBLE_MIN_X = -2.39;  
-static const double VISIBLE_MAX_X = 2.39;  
-static const double VISIBLE_MIN_Y = -2.1;
-static const double VISIBLE_MAX_Y = 1.9;
-static const double VISIBLE_MIN_Z = -20;
-// static const double VISIBLE_MAX_Z = -6;
+static const int PERSPECTIVE_FAR_PLANE = 22;
 
 static const double FONT_SCALEDOWN = 760.0;
 
@@ -50,7 +43,6 @@ static const double SCORE_Z = -10;
 
 static const int MS_PER_FRAME = 5;
 
-static void convertToGlutCoords(double x, double y, double& gx, double& gy, double& gz);
 static void drawPrompt(string mainMessage, string secondMessage);
 static void drawScoreAndLives(string);
 
@@ -68,18 +60,18 @@ void GameController::initDrawersAndSounds()
 	};
 
 	SpriteInfo drawers[] = {
-		{ IID_NACHENBLASTER , 0, "ship.tga"},
-		{ IID_SMALLGON, 0, "smallgon.tga" },
-		{ IID_SMOREGON, 0, "smoregon.tga" },
-		{ IID_SNAGGLEGON, 0, "snagglegon.tga" },
-		{ IID_REPAIR_GOODIE, 0, "health.tga" },
-		{ IID_LIFE_GOODIE, 0, "life.tga" },
-		{ IID_TORPEDO_GOODIE, 0, "sonar.tga" },
-		{ IID_TORPEDO, 0, "torpedo.tga" },
-		{ IID_TURNIP, 0, "turnip.tga" },
-		{ IID_CABBAGE, 0, "cabbage.tga"},
-		{ IID_STAR, 0, "star1.tga" },
-		{ IID_EXPLOSION, 0, "explosion.tga" },
+		{ IID_NACHENBLASTER , 0, "ship.tga" },
+	{ IID_SMALLGON, 0, "smallgon.tga" },
+	{ IID_SMOREGON, 0, "smoregon.tga" },
+	{ IID_SNAGGLEGON, 0, "snagglegon.tga" },
+	{ IID_REPAIR_GOODIE, 0, "health.tga" },
+	{ IID_LIFE_GOODIE, 0, "life.tga" },
+	{ IID_TORPEDO_GOODIE, 0, "sonar.tga" },
+	{ IID_TORPEDO, 0, "torpedo.tga" },
+	{ IID_TURNIP, 0, "turnip.tga" },
+	{ IID_CABBAGE, 0, "cabbage.tga" },
+	{ IID_STAR, 0, "star1.tga" },
+	{ IID_EXPLOSION, 0, "explosion.tga" },
 	};
 
 	SoundMapType::value_type sounds[] = {
@@ -93,7 +85,7 @@ void GameController::initDrawersAndSounds()
 		make_pair(SOUND_TORPEDO        , "torpedo.wav"),
 	};
 
-	for (int k = 0; k < sizeof(drawers)/sizeof(drawers[0]); k++)
+	for (int k = 0; k < sizeof(drawers) / sizeof(drawers[0]); k++)
 	{
 		string path = m_gw->assetDirectory();
 		if (!path.empty())
@@ -102,7 +94,7 @@ void GameController::initDrawersAndSounds()
 		if (!m_spriteManager.loadSprite(path + d.tgaFileName, d.imageID, d.frameNum))
 			exit(1);
 	}
-	for (int k = 0; k < sizeof(sounds)/sizeof(sounds[0]); k++)
+	for (int k = 0; k < sizeof(sounds) / sizeof(sounds[0]); k++)
 		m_soundMap[sounds[k].first] = sounds[k].second;
 }
 
@@ -166,15 +158,15 @@ void GameController::keyboardEvent(unsigned char key, int /* x */, int /* y */)
 {
 	switch (key)
 	{
-		case 'a': case '4': m_lastKeyHit = KEY_PRESS_LEFT;	break;
-		case 'd': case '6': m_lastKeyHit = KEY_PRESS_RIGHT; break;
-		case 'w': case '8': m_lastKeyHit = KEY_PRESS_UP;	break;
-		case 's': case '2': m_lastKeyHit = KEY_PRESS_DOWN;	break;
-		case 't':			m_lastKeyHit = KEY_PRESS_TAB;	break;
-		case 'f':			m_singleStep = true;			break;
-		case 'r':			m_singleStep = false;			break;
-		case 'q': case 'Q': setGameState(quit);				break;
-		default:			m_lastKeyHit = key;				break;
+	case 'a': case '4': m_lastKeyHit = KEY_PRESS_LEFT;	break;
+	case 'd': case '6': m_lastKeyHit = KEY_PRESS_RIGHT; break;
+	case 'w': case '8': m_lastKeyHit = KEY_PRESS_UP;	break;
+	case 's': case '2': m_lastKeyHit = KEY_PRESS_DOWN;	break;
+	case 't':			m_lastKeyHit = KEY_PRESS_TAB;	break;
+	case 'f':			m_singleStep = true;			break;
+	case 'r':			m_singleStep = false;			break;
+	case 'q': case 'Q': setGameState(quit);				break;
+	default:			m_lastKeyHit = key;				break;
 	}
 }
 
@@ -182,21 +174,21 @@ void GameController::specialKeyboardEvent(int key, int /* x */, int /* y */)
 {
 	switch (key)
 	{
-		case GLUT_KEY_LEFT:	 m_lastKeyHit = KEY_PRESS_LEFT;	 break;
-		case GLUT_KEY_RIGHT: m_lastKeyHit = KEY_PRESS_RIGHT; break;
-		case GLUT_KEY_UP:	 m_lastKeyHit = KEY_PRESS_UP;	 break;
-		case GLUT_KEY_DOWN:	 m_lastKeyHit = KEY_PRESS_DOWN;	 break;
-		default:			 m_lastKeyHit = INVALID_KEY;	 break;
+	case GLUT_KEY_LEFT:	 m_lastKeyHit = KEY_PRESS_LEFT;	 break;
+	case GLUT_KEY_RIGHT: m_lastKeyHit = KEY_PRESS_RIGHT; break;
+	case GLUT_KEY_UP:	 m_lastKeyHit = KEY_PRESS_UP;	 break;
+	case GLUT_KEY_DOWN:	 m_lastKeyHit = KEY_PRESS_DOWN;	 break;
+	default:			 m_lastKeyHit = INVALID_KEY;	 break;
 	}
 }
 
 void GameController::playSound(int soundID)
 {
 	if (soundID == SOUND_NONE)
-    {
-        SoundFX().abortClip();
+	{
+		SoundFX().abortClip();
 		return;
-    }
+	}
 
 	SoundMapType::const_iterator p = m_soundMap.find(soundID);
 	if (p != m_soundMap.end())
@@ -215,7 +207,7 @@ void GameController::setGameState(GameControllerState s)
 }
 
 void GameController::setGameStateAfterPrompting(GameControllerState s,
-									string mainMessage, string secondMessage)
+	string mainMessage, string secondMessage)
 {
 	m_mainMessage = mainMessage;
 	m_secondMessage = secondMessage;
@@ -232,99 +224,98 @@ void GameController::doSomething()
 {
 	switch (m_gameState)
 	{
-		case not_applicable:
-			break;
-		case welcome:
-			playSound(SOUND_THEME);
-			setGameStateAfterPrompting(init, "Welcome to NachenBlaster!",
-											"Press Enter to begin play...");
-			break;
-		case init:
+	case not_applicable:
+		break;
+	case welcome:
+		playSound(SOUND_THEME);
+		setGameStateAfterPrompting(init, "Welcome to NachenBlaster!",
+			"Press Enter to begin play...");
+		break;
+	case init:
+	{
+		int status = m_gw->init();
+		SoundFX().abortClip();
+		if (status == GWSTATUS_PLAYER_WON)
+		{
+			m_playerWon = true;
+			setGameState(gameover);
+		}
+		else if (status == GWSTATUS_LEVEL_ERROR)
+			setGameStateAfterPrompting(quit,
+				"Error in level data file encoding!",
+				"Press Enter to quit...");
+		else
+			setGameState(makemove);
+	}
+	break;
+	case makemove:
+		m_curIntraFrameTick = ANIMATION_POSITIONS_PER_TICK;
+		m_nextStateAfterAnimate = not_applicable;
+		{
+			int status = m_gw->move();
+			if (status == GWSTATUS_PLAYER_DIED)
 			{
-				int status = m_gw->init();
-				SoundFX().abortClip();
-				if (status == GWSTATUS_PLAYER_WON)
-				{
-					m_playerWon = true;
-					setGameState(gameover);
-				}
-				else if (status == GWSTATUS_LEVEL_ERROR)
-					setGameStateAfterPrompting(quit,
-						"Error in level data file encoding!",
-						"Press Enter to quit...");
-				else
-					setGameState(makemove);
+				// animate one last frame so the player can see what happened
+				m_nextStateAfterAnimate = (m_gw->isGameOver() ? gameover : contgame);
 			}
-			break;
-		case makemove:
-			m_curIntraFrameTick = ANIMATION_POSITIONS_PER_TICK;
-			m_nextStateAfterAnimate = not_applicable;
+			else if (status == GWSTATUS_FINISHED_LEVEL)
 			{
-				int status = m_gw->move();
-				if (status == GWSTATUS_PLAYER_DIED)
-				{
-					  // animate one last frame so the player can see what happened
-					m_nextStateAfterAnimate = (m_gw->isGameOver() ? gameover : contgame);
-				}
-				else if (status == GWSTATUS_FINISHED_LEVEL)
-				{
-					m_gw->advanceToNextLevel();
-					  // animate one last frame so the player can see what happened
-					m_nextStateAfterAnimate = finishedlevel;
-				}
+				m_gw->advanceToNextLevel();
+				// animate one last frame so the player can see what happened
+				m_nextStateAfterAnimate = finishedlevel;
 			}
-			setGameState(animate);
-			break;
-		case animate:
-			displayGamePlay();
-			if (m_curIntraFrameTick-- <= 0)
-			{
-				if (m_nextStateAfterAnimate != not_applicable)
-					setGameState(m_nextStateAfterAnimate);
-				else
-				{
-					int key;
-					if (!m_singleStep  ||  getLastKey(key))
-						setGameState(makemove);
-				}
-			}
-			break;
-		case contgame:
-			setGameStateAfterPrompting(cleanup, "You lost a life!",
-										"Press Enter to continue playing...");
-			break;
-		case finishedlevel:
-			setGameStateAfterPrompting(cleanup, "Woot! You finished the level!",
-										"Press Enter to continue playing...");
-			break;
-		case cleanup:
-			m_gw->cleanUp();
-			setGameState(init);
-			break;
-		case gameover:
-			{
-				ostringstream oss;
-				oss << (m_playerWon ? "You won the game!" : "Game Over!")
-					<< " Final score: " << m_gw->getScore() << "!";
-				setGameStateAfterPrompting(quit, oss.str(), "Press Enter to quit...");
-				m_gw->cleanUp();
-			}
-			break;
-		case prompt:
-			drawPrompt(m_mainMessage, m_secondMessage);
+		}
+		setGameState(animate);
+		break;
+	case animate:
+		displayGamePlay();
+		if (m_curIntraFrameTick-- <= 0)
+		{
+			if (m_nextStateAfterAnimate != not_applicable)
+				setGameState(m_nextStateAfterAnimate);
+			else
 			{
 				int key;
-				if (getLastKey(key) && key == '\r')
-					setGameState(m_nextStateAfterPrompt);
+				if (!m_singleStep || getLastKey(key))
+					setGameState(makemove);
 			}
-			break;
-		case quit:
-            SoundFX().abortClip();
-			glutLeaveMainLoop();
-			break;
+		}
+		break;
+	case contgame:
+		setGameStateAfterPrompting(cleanup, "You lost a life!",
+			"Press Enter to continue playing...");
+		break;
+	case finishedlevel:
+		setGameStateAfterPrompting(cleanup, "Woot! You finished the level!",
+			"Press Enter to continue playing...");
+		break;
+	case cleanup:
+		m_gw->cleanUp();
+		setGameState(init);
+		break;
+	case gameover:
+	{
+		ostringstream oss;
+		oss << (m_playerWon ? "You won the game!" : "Game Over!")
+			<< " Final score: " << m_gw->getScore() << "!";
+		setGameStateAfterPrompting(quit, oss.str(), "Press Enter to quit...");
+		m_gw->cleanUp();
+	}
+	break;
+	case prompt:
+		drawPrompt(m_mainMessage, m_secondMessage);
+		{
+			int key;
+			if (getLastKey(key) && key == '\r')
+				setGameState(m_nextStateAfterPrompt);
+		}
+		break;
+	case quit:
+		SoundFX().abortClip();
+		glutLeaveMainLoop();
+		break;
 	}
 }
-
 
 void GameController::displayGamePlay()
 {
@@ -340,39 +331,24 @@ void GameController::displayGamePlay()
 #pragma GCC diagnostic pop
 #endif
 
-	for (int i = NUM_LAYERS - 1; i >= 0; --i)
+	GraphObject::drawAllObjects(
+		[=](int imageID, int animationNumber, double x, double y, int angle, double size)
 	{
-		std::set<GraphObject*>& graphObjects = GraphObject::getGraphObjects(i);
+		int frame = animationNumber % m_spriteManager.getNumFrames(imageID);
+		m_spriteManager.plotSprite(imageID, frame, x, y, angle, size);
 
-		for (auto it = graphObjects.begin(); it != graphObjects.end(); it++)
-		{
-			GraphObject* cur = *it;
-			if (cur->isVisible())
-			{
-				cur->animate();
-
-				double x, y, gx, gy, gz;
-				cur->getAnimationLocation(x, y);
-				convertToGlutCoords(x, y, gx, gy, gz);
-
-				int angle = cur->getDirection();
-				int imageID = cur->getID();
-
-				m_spriteManager.plotSprite(imageID, cur->getAnimationNumber() % m_spriteManager.getNumFrames(imageID), gx, gy, gz, angle, cur->getSize());
-			}
-		}
-	}
+	});
 
 	drawScoreAndLives(m_gameStatText);
 
 	glutSwapBuffers();
 }
 
-void GameController::reshape (int w, int h)
+void GameController::reshape(int w, int h)
 {
-	glViewport (0, 0, (GLsizei) w, (GLsizei) h);
-	glMatrixMode (GL_PROJECTION);
-	glLoadIdentity ();
+	glViewport(0, 0, (GLsizei)w, (GLsizei)h);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
 #ifdef _MSC_VER
 	gluPerspective(45.0, double(WINDOW_WIDTH) / WINDOW_HEIGHT, PERSPECTIVE_NEAR_PLANE, PERSPECTIVE_FAR_PLANE);
 #else
@@ -381,16 +357,7 @@ void GameController::reshape (int w, int h)
 	gluPerspective(45.0, double(WINDOW_WIDTH) / WINDOW_HEIGHT, PERSPECTIVE_NEAR_PLANE, PERSPECTIVE_FAR_PLANE);
 #pragma GCC diagnostic pop
 #endif
-	glMatrixMode (GL_MODELVIEW);
-}
-
-static void convertToGlutCoords(double x, double y, double& gx, double& gy, double& gz)
-{
-	x /= VIEW_WIDTH;
-	y /= VIEW_HEIGHT;
-	gx = 2 * VISIBLE_MIN_X + .3 + x * 2 * (VISIBLE_MAX_X - VISIBLE_MIN_X);
-	gy = 2 * VISIBLE_MIN_Y +	  y * 2 * (VISIBLE_MAX_Y - VISIBLE_MIN_Y);
-	gz = .6 * VISIBLE_MIN_Z;
+	glMatrixMode(GL_MODELVIEW);
 }
 
 static void doOutputStroke(double x, double y, double z, double size, const char* str, bool centered)
@@ -407,7 +374,7 @@ static void doOutputStroke(double x, double y, double z, double size, const char
 	glLoadIdentity();
 	glTranslatef(static_cast<GLfloat>(x), static_cast<GLfloat>(y), static_cast<GLfloat>(z));
 	glScalef(scaledSize, scaledSize, scaledSize);
-	for ( ; *str != '\0'; str++)
+	for (; *str != '\0'; str++)
 		glutStrokeCharacter(GLUT_STROKE_ROMAN, *str);
 	glPopMatrix();
 }
@@ -425,8 +392,8 @@ static void outputStrokeCentered(double y, double z, const char* str)
 static void drawPrompt(string mainMessage, string secondMessage)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glColor3f (1.0, 1.0, 1.0);
-	glLoadIdentity ();
+	glColor3f(1.0, 1.0, 1.0);
+	glLoadIdentity();
 	outputStrokeCentered(1, -5, mainMessage.c_str());
 	outputStrokeCentered(-1, -5, secondMessage.c_str());
 	glutSwapBuffers();
@@ -436,7 +403,7 @@ static void drawScoreAndLives(string gameStatText)
 {
 	static int RATE = 1;
 	static GLfloat rgb[3] =
-		{ static_cast<GLfloat>(.6), static_cast<GLfloat>(.6), static_cast<GLfloat>(.6) };
+	{ static_cast<GLfloat>(.6), static_cast<GLfloat>(.6), static_cast<GLfloat>(.6) };
 	for (int k = 0; k < 3; k++)
 	{
 		double strength = rgb[k] + randInt(-RATE, RATE) / 100.0;

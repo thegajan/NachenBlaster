@@ -11,23 +11,23 @@ public:
 	Actor(int imageID, int startX, int startY, StudentWorld* world, int damage = 0, int startDirection = 0, double size = 1.0, int depth = 0);
 	virtual ~Actor() {}
 	virtual void doSomething() = 0;
-	bool getState() { return m_state; }
+	bool getState() const { return m_state; }
 	void changeState() { m_state = false; }
-	StudentWorld* getWorld() { return m_world; }
+	StudentWorld* getWorld() const { return m_world; }
 	virtual void offScreen();
-	bool collide(Actor* p1, Actor* p2); //check to see if collision is occuring
-	virtual bool collidable() { return true; } //check to see if object can collide with other objects
-	bool collision(bool isEvil); //call to proccess collision
-	virtual bool isEvil() { return false; }
-	int getHealth() { return m_health; }
+//	bool collide(Actor* p1, Actor* p2); //check to see if collision is occuring
+	virtual bool collidable() const { return true; } //check to see if object can collide with other objects
+	void collision(Actor* p); //call to proccess collision
+	virtual bool isEvil() const { return false; }
+	int getHealth() const { return m_health; }
 	void setHealth(int health) { m_health = health; }
-	virtual bool isNach() { return false; }
-	int getDamage() { return m_damage; }
-	virtual bool damageable() { return false; }
-	virtual int type() { return 0; }
-	virtual int score() { return 0; }
+	virtual bool isNach() const { return false; }
+	int getDamage() const { return m_damage; }
+	virtual bool damageable() const { return false; }
+	virtual int type() const { return 0; }
+	virtual int score() const { return 0; }
 private:
-	int m_damage;
+	int m_damage = 0;
 	int m_health = 0;
 	bool m_state = true;
 	StudentWorld* m_world;
@@ -46,6 +46,7 @@ public:
 	Explosion(int startX, int startY, StudentWorld* world);
 	virtual ~Explosion() {};
 	virtual void doSomething();
+	virtual bool collidable() { return false; }
 private:
 	int m_ticks = 0;
 };
@@ -56,9 +57,8 @@ public:
 	Craft(int imageID, int startX, int startY, StudentWorld* world, int health, int damage, double size, int depth);
 	virtual ~Craft() {}
 	virtual void doSomething() = 0;
-	//virtual void getHit() = 0;
+	virtual bool damageable() const{ return true; }
 	virtual void killed();
-	virtual bool damageable() { return true; }
 };
 
 //NachenBlaster class
@@ -68,13 +68,13 @@ public:
 	NachenBlaster(StudentWorld* world);
 	virtual ~NachenBlaster() {}
 	virtual void doSomething();
-	void fire(int x, int y, int type);
-	int getCabbage() { return m_cabbage; }
-	int getTorpedo() { return m_torpedo; }
 	//virtual void getHit() {}
-	virtual bool isNach() { return true; }
-	virtual int type() { return 1; }
+	virtual bool isNach() const { return true; }
+	virtual int type() const { return 1; }
+	int getCabbage() const { return m_cabbage; }
+	int getTorpedo() const { return m_torpedo; }
 private:
+	void fire(int x, int y, int type);
 	int m_cabbage = 30;
 	int m_torpedo = 0;
 };
@@ -85,20 +85,20 @@ public:
 	Villain(int imageID, int startX, int startY, StudentWorld* world, int health, double travelSpeed, int flightPath, int damage);
 	virtual ~Villain() {}
 	virtual void doSomething() = 0;
-	virtual bool isEvil() { return true; }
-	virtual int type() { return 2; }
-	virtual int score() { return 250; }
+	virtual bool isEvil() const { return true; }
+	virtual int type() const { return 2; }
+	virtual int score() const { return 250; }
 	void flightPath();
 	void fly();
 	bool actionDuringFlight();
-	int getFlightPath() { return m_flightPath; }
+	int getFlightPath() const { return m_flightPath; }
 	void setFlightPath(int path) { m_flightPath = path; }
-	double getTravelSpeed() { return m_travelSpeed; }
+	double getTravelSpeed() const { return m_travelSpeed; }
 	void setTravelSpeed(int speed) { m_travelSpeed = speed; }
-	int getTravelDir() { return m_travelDir; }
+	int getTravelDir() const { return m_travelDir; }
 	void changeTravelDir(int travelDir) { m_travelDir = travelDir; }
-	virtual bool notSnagg() { return true; }
-	virtual bool smoregon() { return false; }
+	virtual bool notSnagg() const { return true; }
+	virtual bool smoregon() const { return false; }
 private:
 	double m_travelSpeed;
 	int m_flightPath;
@@ -117,7 +117,7 @@ public:
 	Smoregon(int startX, int startY, StudentWorld* world);
 	virtual ~Smoregon() {}
 	virtual void doSomething();
-	virtual bool smoregon() { return true; }
+	virtual bool smoregon() const { return true; }
 };
 
 class Snagglegon : public Villain {
@@ -125,8 +125,8 @@ public:
 	Snagglegon(int startX, int startY, StudentWorld* world);
 	virtual ~Snagglegon() {}
 	virtual void doSomething();
-	virtual int score() { return 1000; }
-	virtual bool notSnagg() { return false; }
+	virtual int score() const { return 1000; }
+	virtual bool notSnagg() const { return false; }
 };
 
 //class projectile
@@ -136,15 +136,14 @@ public:
 	Projectile(int imageID, int startX, int startY, StudentWorld* world, bool side, int startDirection = 0, int damage = 0);
 	virtual ~Projectile() {};
 	//virtual void collideWithCraft(int damage, bool targetBad);
-	virtual bool collidable() { return false; }
-	virtual int type() { return 3; }
-	virtual bool isEvil() { return m_side; }
+	virtual bool collidable() const { return false; }
+	virtual int type() const { return 3; }
+	virtual bool isEvil() const { return m_side; }
 private:
 	bool m_side;
 };
 
 //cabbage class
-
 class Cabbage : public Projectile {
 public:
 	Cabbage(int startX, int startY, StudentWorld* world);

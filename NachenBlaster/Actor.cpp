@@ -1,6 +1,5 @@
 #include "Actor.h"
 #include "StudentWorld.h"
-#include <cmath>
 #include <vector>
 // Students:  Add code to this file, Actor.h, StudentWorld.h, and StudentWorld.cpp
 
@@ -18,51 +17,8 @@ void Actor::offScreen() {
 		changeState();
 }
 
-bool Actor::collide(Actor* p1, Actor* p2) {
-	if (p1->getState() && p2->getState()) {
-		double x1 = p1->getX();
-		double y1 = p1->getY();
-		double r1 = p1->getRadius();
-		double r2 = p2->getRadius();
-		double x2 = p2->getX();
-		double y2 = p2->getY();
-		double distance = sqrt(pow((x2 - x1), 2) + pow((y2 - y1), 2));
-		if (distance < 0.75*(r1 + r2) && collidable())
-			return true;
-	}
-	return false;
-}
-
-bool Actor::collision(bool evil) {
-	std::vector<Actor*> actors = m_world->getActors(); // change this
-	std::vector<Actor*>::iterator it = actors.begin();
-	while (it != actors.end()) {
-		if ((*it)->type() != type() && (*it)->collide(*it, this)) {
-			//prevent good from shooting good and bad from shooting bad
-			//if (evil && !(*it)->isEvil()) {
-			//	it++;
-			//	continue;
-			//}
-			//if (!evil && !(*it)->isEvil()) {
-			//	it++;
-			//	continue;
-			//}
-			int health = (*it)->getHealth();
-			(*it)->setHealth(health - m_damage);
-			if (type() == 3)
-				changeState();
-			if ((*it)->getHealth() > 0 && (*it)->damageable())
-				m_world->playSound(SOUND_BLAST);
-			else {
-				if ((*it)->isEvil())
-					m_world->killVillain();
-				m_world->playSound(SOUND_DEATH);
-				m_world->increaseScore((*it)->score());
-			}
-		}
-		it++;
-	}
-	return true;
+void Actor::collision(Actor* p) {
+	getWorld()->collisionOccur(p);
 }
 
 //star class
@@ -158,7 +114,7 @@ void NachenBlaster::doSomething() {
 	}
 	if (m_cabbage < 30)
 		m_cabbage++;
-	collision(false);
+	collision(this);
 }
 
 void NachenBlaster::fire(int x, int y, int type) {
@@ -166,10 +122,12 @@ void NachenBlaster::fire(int x, int y, int type) {
 	if (type == 0) {
 		m_cabbage = m_cabbage - 5;
 		p = new Cabbage(x + 12, y, getWorld());
+		getWorld()->playSound(SOUND_PLAYER_SHOOT);
 	}
 	else if (type == 1) {
 		m_torpedo--;
 		p = new Torpedo(x + 12, y, getWorld(), false);
+		getWorld()->playSound(SOUND_TORPEDO);
 	}
 	getWorld()->addItem(p);
 }
@@ -199,7 +157,7 @@ void Villain::flightPath() {
 }
 
 void Villain::fly() {
-	return;
+	//return;
 	switch (m_travelDir)
 	{
 	case 1:
@@ -254,12 +212,12 @@ void Smallgon::doSomething() {
 	offScreen();
 	if (!getState())
 		return;
-	collision(true);
+	collision(this);
 	killed();
 	flightPath();
 	if (!actionDuringFlight())
 		fly();
-	collision(true);
+	collision(this);
 	killed();
 }
 
@@ -273,12 +231,12 @@ void Smoregon::doSomething() {
 	offScreen();
 	if (!getState())
 		return;
-	collision(true);
+	collision(this);
 	killed();
 	flightPath();
 	if (!actionDuringFlight())
 		fly();
-	collision(true);
+	collision(this);
 	killed();
 }
 
@@ -294,12 +252,12 @@ void Snagglegon::doSomething() {
 	offScreen();
 	if (!getState())
 		return;
-	collision(true);
+	collision(this);
 	killed();
 	flightPath();
 	if (!actionDuringFlight())
 		fly();
-	collision(true);
+	collision(this);
 	killed();
 }
 
@@ -321,7 +279,7 @@ void Cabbage::doSomething() {
 	offScreen();
 	if (!getState())
 		return;
-	collision(false);
+	collision(this);
 	int x = getX(), y = getY();
 	moveTo(x + 8, y);
 	int d = getDirection();
@@ -339,7 +297,7 @@ void Turnip::doSomething() {
 	offScreen();
 	if (!getState())
 		return;
-	collision(true);
+	collision(this);
 	int x = getX(), y = getY();
 	moveTo(x - 6, y);
 	int d = getDirection();
@@ -357,6 +315,7 @@ void Torpedo::doSomething() {
 	offScreen();
 	if (!getState())
 		return;
+	collision(this);
 	int x = getX(), y = getY();
 	if (isEvil() == true)
 		moveTo(x - 8, y);

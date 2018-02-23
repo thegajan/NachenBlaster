@@ -16,13 +16,15 @@ public:
 	virtual int init();
 	virtual int move();
 	virtual void cleanUp();
-	void newItem();
-	void displayStatus();
 	void addItem(Actor* x) { m_v.push_back(x); }
-	std::vector<Actor*> getActors() { return m_v; }
+	std::vector<Actor*> getActors() { return m_v; } // remove this
 	void killVillain() { m_numVillainsDestroyed++; }
-	NachenBlaster* getNach() { return m_nach; }
+	NachenBlaster* getNach() const { return m_nach; }
+	void collisionOccur(Actor* p1);
 private:
+	bool collisionDistance(Actor* p1, Actor* p2) const;
+	void displayStatus();
+	void newItem();
 	NachenBlaster * m_nach;
 	std::vector<Actor*> m_v;
 	int m_numVillains;
