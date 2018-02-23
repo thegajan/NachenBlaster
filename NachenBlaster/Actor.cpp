@@ -62,7 +62,7 @@ Craft::Craft(int imageID, int startX, int startY, StudentWorld* world, int healt
 }
 
 void Craft::killed() {
-	if (getHealth() < 0) {
+	if (getHealth() < 0 && getState()) {
 		action();
 		changeState();
 		Explosion * e = new Explosion(getX(), getY(), getWorld());
@@ -227,8 +227,8 @@ Smoregon::Smoregon(int startX, int startY, StudentWorld* world)
 {}
 
 void Smoregon::action() {
-	//int rand = randInt(0, 2);
-	int rand = 0; //REMOVE ONLY FOR DEBUGGING
+	int rand = randInt(0, 2);
+	//int rand = 0; //REMOVE ONLY FOR DEBUGGING
 	if (rand == 0) {
 		rand = randInt(0, 1);
 		if (rand == 0) {
@@ -249,8 +249,8 @@ Snagglegon::Snagglegon(int startX, int startY, StudentWorld* world)
 }
 
 void Snagglegon::action() {
-	//int rand = randInt(0, 5);
-	int rand = 0;
+	int rand = randInt(0, 5);
+	//int rand = 0;
 	if (rand == 0) {
 		ExtraLife* e = new ExtraLife(getX(), getY(), getWorld());
 		getWorld()->addItem(e);
