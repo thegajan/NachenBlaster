@@ -119,18 +119,18 @@ void NachenBlaster::doSomething() {
 }
 
 void NachenBlaster::fire(int x, int y, int type) {
-	Projectile* p;
 	if (type == 0) {
 		m_cabbage = m_cabbage - 5;
-		p = new Cabbage(x + 12, y, getWorld());
+		Projectile* p = new Cabbage(x + 12, y, getWorld());
 		getWorld()->playSound(SOUND_PLAYER_SHOOT);
+		getWorld()->addItem(p);
 	}
 	else if (type == 1) {
 		m_torpedo--;
-		p = new Torpedo(x + 12, y, getWorld(), false);
+		Projectile* p = new Torpedo(x + 12, y, getWorld(), false);
 		getWorld()->playSound(SOUND_TORPEDO);
+		getWorld()->addItem(p);
 	}
-	getWorld()->addItem(p);
 }
 
 //Villian class

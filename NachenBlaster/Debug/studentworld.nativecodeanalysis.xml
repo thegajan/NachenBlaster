@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DEFECTS>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>c:\gajan\school\ucla\freshman\winter\cs32\projects\nachenblaster\nachenblaster\</FILEPATH>
+      <FILENAME>studentworld.cpp</FILENAME>
+      <LINE>85</LINE>
+      <COLUMN>6</COLUMN>
+    </SFA>
+    <DEFECTCODE>6246</DEFECTCODE>
+    <DESCRIPTION>Local declaration of 'x' hides declaration of the same name in outer scope. For additional information, see previous declaration at line '83' of 'c:\gajan\school\ucla\freshman\winter\cs32\projects\nachenblaster\nachenblaster\studentworld.cpp'.</DESCRIPTION>
+    <FUNCTION>StudentWorld::newItem</FUNCTION>
+    <DECORATED>?newItem@StudentWorld@@AAEXXZ</DECORATED>
+    <FUNCLINE>81</FUNCLINE>
+    <PATH>
+      <SFA>
+        <FILEPATH>c:\gajan\school\ucla\freshman\winter\cs32\projects\nachenblaster\nachenblaster\</FILEPATH>
+        <FILENAME>studentworld.cpp</FILENAME>
+        <LINE>83</LINE>
+        <COLUMN>5</COLUMN>
+      </SFA>
+    </PATH>
+  </DEFECT>
+</DEFECTS>
