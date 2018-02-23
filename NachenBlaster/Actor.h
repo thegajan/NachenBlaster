@@ -14,18 +14,17 @@ public:
 	bool getState() const { return m_state; }
 	void changeState() { m_state = false; }
 	StudentWorld* getWorld() const { return m_world; }
-	virtual void offScreen();
-//	bool collide(Actor* p1, Actor* p2); //check to see if collision is occuring
+	void offScreen();
 	virtual bool collidable() const { return true; } //check to see if object can collide with other objects
 	void collision(Actor* p); //call to proccess collision
 	virtual bool isEvil() const { return false; }
 	int getHealth() const { return m_health; }
 	void setHealth(int health) { m_health = health; }
-	virtual bool isNach() const { return false; }
 	int getDamage() const { return m_damage; }
 	virtual bool damageable() const { return false; }
 	virtual int type() const { return 0; }
 	virtual int score() const { return 0; }
+	virtual void action() {}
 private:
 	int m_damage = 0;
 	int m_health = 0;
@@ -68,11 +67,10 @@ public:
 	NachenBlaster(StudentWorld* world);
 	virtual ~NachenBlaster() {}
 	virtual void doSomething();
-	//virtual void getHit() {}
-	virtual bool isNach() const { return true; }
 	virtual int type() const { return 1; }
 	int getCabbage() const { return m_cabbage; }
 	int getTorpedo() const { return m_torpedo; }
+	void setTorpedo(int amt) { m_torpedo = m_torpedo + amt; }
 private:
 	void fire(int x, int y, int type);
 	int m_cabbage = 30;
@@ -84,7 +82,6 @@ class Villain : public Craft {
 public:
 	Villain(int imageID, int startX, int startY, StudentWorld* world, int health, double travelSpeed, int flightPath, int damage);
 	virtual ~Villain() {}
-	virtual void doSomething() = 0;
 	virtual bool isEvil() const { return true; }
 	virtual int type() const { return 2; }
 	virtual int score() const { return 250; }
@@ -99,6 +96,7 @@ public:
 	void changeTravelDir(int travelDir) { m_travelDir = travelDir; }
 	virtual bool notSnagg() const { return true; }
 	virtual bool smoregon() const { return false; }
+	virtual void doSomething();
 private:
 	double m_travelSpeed;
 	int m_flightPath;
@@ -109,24 +107,23 @@ class Smallgon : public Villain {
 public:
 	Smallgon(int startX, int startY, StudentWorld* world);
 	virtual ~Smallgon() {};
-	virtual void doSomething();
 };
 
 class Smoregon : public Villain {
 public:
 	Smoregon(int startX, int startY, StudentWorld* world);
 	virtual ~Smoregon() {}
-	virtual void doSomething();
 	virtual bool smoregon() const { return true; }
+	virtual void action();
 };
 
 class Snagglegon : public Villain {
 public:
 	Snagglegon(int startX, int startY, StudentWorld* world);
 	virtual ~Snagglegon() {}
-	virtual void doSomething();
 	virtual int score() const { return 1000; }
 	virtual bool notSnagg() const { return false; }
+	virtual void action();
 };
 
 //class projectile
@@ -135,7 +132,6 @@ class Projectile : public Actor {
 public:
 	Projectile(int imageID, int startX, int startY, StudentWorld* world, bool side, int startDirection = 0, int damage = 0);
 	virtual ~Projectile() {};
-	//virtual void collideWithCraft(int damage, bool targetBad);
 	virtual bool collidable() const { return false; }
 	virtual int type() const { return 3; }
 	virtual bool isEvil() const { return m_side; }
@@ -167,4 +163,35 @@ public:
 	virtual void doSomething();
 };
 
+//goodie class
+class Goodie : public Actor {
+public:
+	Goodie(int imageID, int startX, int startY, StudentWorld* world);
+	virtual ~Goodie() {};
+	virtual int type() const { return 4; }
+	virtual void doSomething();
+	virtual bool collidable() const { return false; }
+};
+
+
+class ExtraLife :public Goodie {
+public:
+	ExtraLife(int startX, int startY, StudentWorld* world);
+	virtual ~ExtraLife() {};
+	virtual void action();
+};
+
+class Repair :public Goodie {
+public:
+	Repair(int startX, int startY, StudentWorld* world);
+	virtual ~Repair() {};
+	virtual void action();
+};
+
+class TorpedoGoodie :public Goodie {
+public:
+	TorpedoGoodie(int startX, int startY, StudentWorld* world);
+	virtual ~TorpedoGoodie() {};
+	virtual void action();
+};
 #endif // ACTOR_H_

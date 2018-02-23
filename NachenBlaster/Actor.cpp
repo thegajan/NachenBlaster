@@ -63,6 +63,7 @@ Craft::Craft(int imageID, int startX, int startY, StudentWorld* world, int healt
 
 void Craft::killed() {
 	if (getHealth() < 0) {
+		action();
 		changeState();
 		Explosion * e = new Explosion(getX(), getY(), getWorld());
 		getWorld()->addItem(e);
@@ -202,11 +203,7 @@ bool Villain::actionDuringFlight() {
 	return false;
 }
 
-Smallgon::Smallgon(int startX, int startY, StudentWorld* world)
-	:Villain(IID_SMALLGON, startX, startY, world, 5 * (1 + (world->getLevel() - 1)*0.1), 2.0, 0, 5)
-{}
-
-void Smallgon::doSomething() {
+void Villain::doSomething() {
 	if (!getState())
 		return;
 	offScreen();
@@ -221,23 +218,28 @@ void Smallgon::doSomething() {
 	killed();
 }
 
+Smallgon::Smallgon(int startX, int startY, StudentWorld* world)
+	:Villain(IID_SMALLGON, startX, startY, world, 5 * (1 + (world->getLevel() - 1)*0.1), 2.0, 0, 5)
+{}
+
 Smoregon::Smoregon(int startX, int startY, StudentWorld* world)
 	:Villain(IID_SMOREGON, startX, startY, world, 5 * (1 + (world->getLevel() - 1)*0.1), 2.0, 0, 5)
 {}
 
-void Smoregon::doSomething() {
-	if (!getState())
-		return;
-	offScreen();
-	if (!getState())
-		return;
-	collision(this);
-	killed();
-	flightPath();
-	if (!actionDuringFlight())
-		fly();
-	collision(this);
-	killed();
+void Smoregon::action() {
+	//int rand = randInt(0, 2);
+	int rand = 0; //REMOVE ONLY FOR DEBUGGING
+	if (rand == 0) {
+		rand = randInt(0, 1);
+		if (rand == 0) {
+			Repair* r = new Repair(getX(), getY(), getWorld());
+			getWorld()->addItem(r);
+		}
+		else {
+			TorpedoGoodie* t = new TorpedoGoodie(getX(), getY(), getWorld());
+			getWorld()->addItem(t);
+		}
+	}
 }
 
 Snagglegon::Snagglegon(int startX, int startY, StudentWorld* world)
@@ -246,19 +248,13 @@ Snagglegon::Snagglegon(int startX, int startY, StudentWorld* world)
 	changeTravelDir(1);
 }
 
-void Snagglegon::doSomething() {
-	if (!getState())
-		return;
-	offScreen();
-	if (!getState())
-		return;
-	collision(this);
-	killed();
-	flightPath();
-	if (!actionDuringFlight())
-		fly();
-	collision(this);
-	killed();
+void Snagglegon::action() {
+	//int rand = randInt(0, 5);
+	int rand = 0;
+	if (rand == 0) {
+		ExtraLife* e = new ExtraLife(getX(), getY(), getWorld());
+		getWorld()->addItem(e);
+	}
 }
 
 //projectile class
@@ -321,4 +317,51 @@ void Torpedo::doSomething() {
 		moveTo(x - 8, y);
 	else
 		moveTo(x + 8, y);
+}
+
+//goodie class
+Goodie::Goodie(int imageID, int startX, int startY, StudentWorld* world)
+	:Actor(imageID, startX, startY, world, 0, 0, 0.5, 1)
+{}
+
+void Goodie::doSomething() {
+	if (!getState())
+		return;
+	offScreen();
+	if (!getState())
+		return;
+	collision(this);
+	moveTo(getX() - .75, getY() - .75);
+	collision(this);
+}
+
+//extra life
+ExtraLife::ExtraLife(int startX, int startY, StudentWorld* world)
+	: Goodie(IID_LIFE_GOODIE, startX, startY, world)
+{}
+
+void ExtraLife::action() {
+	getWorld()->incLives();
+}
+
+//repair
+Repair::Repair(int startX, int startY, StudentWorld* world)
+	: Goodie(IID_REPAIR_GOODIE, startX, startY, world)
+{}
+
+void Repair::action() {
+	int nachHealth = getWorld()->getNach()->getHealth();
+	if (nachHealth + 10 > 50)
+		getWorld()->getNach()->setHealth(50);
+	else
+		getWorld()->getNach()->setHealth(nachHealth + 10);
+}
+
+//torpedo goodie
+TorpedoGoodie::TorpedoGoodie(int startX, int startY, StudentWorld* world)
+	: Goodie(IID_TORPEDO_GOODIE, startX, startY, world)
+{}
+
+void TorpedoGoodie::action() {
+	getWorld()->getNach()->setTorpedo(5);
 }

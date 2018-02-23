@@ -18,10 +18,10 @@ public:
 	virtual void cleanUp();
 	void addItem(Actor* x) { m_v.push_back(x); }
 	std::vector<Actor*> getActors() { return m_v; } // remove this
-	void killVillain() { m_numVillainsDestroyed++; }
 	NachenBlaster* getNach() const { return m_nach; }
 	void collisionOccur(Actor* p1);
 private:
+	void killVillain() { m_numVillainsDestroyed++; }
 	bool collisionDistance(Actor* p1, Actor* p2) const;
 	void displayStatus();
 	void newItem();

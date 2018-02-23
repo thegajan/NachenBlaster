@@ -134,12 +134,18 @@ void StudentWorld::collisionOccur(Actor* p1) {
 	vector<Actor*>::iterator it = m_v.begin();
 	while (it != m_v.end()) {
 		if (p1->type() != (*it)->type() && collisionDistance(p1, *it)) {
-			//Actor* a = p1;
 			Actor* a = *it;
 			int health = a->getHealth();
 			a->setHealth(health - p1->getDamage());
 			if (p1->type() == 3)
 				p1->changeState();
+			if (p1->type() == 4 && a == m_nach) {
+				increaseScore(100);
+				p1->changeState();
+				p1->action();
+				playSound(SOUND_GOODIE);
+				return;
+			}
 			if (a->getHealth() > 0 && a->damageable())
 				playSound(SOUND_BLAST);
 			else if (a->getHealth() < 0 && a->damageable())
@@ -163,7 +169,7 @@ bool StudentWorld::collisionDistance(Actor* p1, Actor* p2) const {
 			double x2 = p2->getX();
 			double y2 = p2->getY();
 			double distance = sqrt(pow((x2 - x1), 2) + pow((y2 - y1), 2));
-			if (distance < 0.75*(r1 + r2) && p2->collidable() && p2->type() != 0 && p1->type() != 0)
+			if (distance < 0.75*(r1 + r2) && p2->collidable() && p2->type() != 0 && p1->type() != 0 && p1->getState() && p2->getState())
 				return true;
 		}
 		return false;
