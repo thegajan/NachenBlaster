@@ -61,21 +61,12 @@ Craft::Craft(int imageID, int startX, int startY, StudentWorld* world, int healt
 	setHealth(health);
 }
 
-void Craft::killed() {
-	if (getHealth() < 0 && getState()) {
-		action();
-		changeState();
-		Explosion * e = new Explosion(getX(), getY(), getWorld());
-		getWorld()->addItem(e);
-	}
-}
-
 //nachenblaster class
 NachenBlaster::NachenBlaster(StudentWorld* world)
 	:Craft(IID_NACHENBLASTER, 0, 128, world, 50, 100, 1, 0)
 {}
 
-void NachenBlaster::doSomething() {
+void NachenBlaster::doSomething	() {
 	if (getHealth() < 0)
 		changeState();
 	//check if nachenblaster is dead
@@ -157,6 +148,16 @@ void Villain::flightPath() {
 	}
 }
 
+
+void Villain::killed() {
+	if (getHealth() < 0 && getState()) {
+		action();
+		changeState();
+		Explosion * e = new Explosion(getX(), getY(), getWorld());
+		getWorld()->addItem(e);
+	}
+}
+
 void Villain::fly() {
 	//return;
 	switch (m_travelDir)
@@ -188,9 +189,9 @@ bool Villain::actionDuringFlight() {
 			return true;
 		}
 		if (rand == 1 && smoregon()) {
-			changeTravelDir(3);
-			setFlightPath(VIEW_WIDTH);
-			setTravelSpeed(5);
+			m_travelDir = 3;
+			m_flightPath = VIEW_WIDTH;
+			m_travelSpeed = 5;
 			return false;
 		}
 		if (rand2 == 0 && !notSnagg()) {
@@ -218,6 +219,32 @@ void Villain::doSomething() {
 	killed();
 }
 
+void Villain::action() {
+	if (smoregon()) {
+		int rand = randInt(0, 2);
+		//int rand = 0; //REMOVE ONLY FOR DEBUGGING
+		if (rand == 0) {
+			rand = randInt(0, 1);
+			if (rand == 0) {
+				Repair* r = new Repair(getX(), getY(), getWorld());
+				getWorld()->addItem(r);
+			}
+			else {
+				TorpedoGoodie* t = new TorpedoGoodie(getX(), getY(), getWorld());
+				getWorld()->addItem(t);
+			}
+		}
+	}
+	else if (!notSnagg()) {
+		int rand = randInt(0, 5);
+		//int rand = 0;
+		if (rand == 0) {
+			ExtraLife* e = new ExtraLife(getX(), getY(), getWorld());
+			getWorld()->addItem(e);
+		}
+	}
+}
+
 Smallgon::Smallgon(int startX, int startY, StudentWorld* world)
 	:Villain(IID_SMALLGON, startX, startY, world, 5 * (1 + (world->getLevel() - 1)*0.1), 2.0, 0, 5)
 {}
@@ -226,35 +253,10 @@ Smoregon::Smoregon(int startX, int startY, StudentWorld* world)
 	:Villain(IID_SMOREGON, startX, startY, world, 5 * (1 + (world->getLevel() - 1)*0.1), 2.0, 0, 5)
 {}
 
-void Smoregon::action() {
-	int rand = randInt(0, 2);
-	//int rand = 0; //REMOVE ONLY FOR DEBUGGING
-	if (rand == 0) {
-		rand = randInt(0, 1);
-		if (rand == 0) {
-			Repair* r = new Repair(getX(), getY(), getWorld());
-			getWorld()->addItem(r);
-		}
-		else {
-			TorpedoGoodie* t = new TorpedoGoodie(getX(), getY(), getWorld());
-			getWorld()->addItem(t);
-		}
-	}
-}
-
 Snagglegon::Snagglegon(int startX, int startY, StudentWorld* world)
 	:Villain(IID_SNAGGLEGON, startX, startY, world, 10 * (1 + (world->getLevel() - 1)*0.1), 1.75, 0, 15)
 {
 	changeTravelDir(1);
-}
-
-void Snagglegon::action() {
-	int rand = randInt(0, 5);
-	//int rand = 0;
-	if (rand == 0) {
-		ExtraLife* e = new ExtraLife(getX(), getY(), getWorld());
-		getWorld()->addItem(e);
-	}
 }
 
 //projectile class
@@ -264,60 +266,47 @@ Projectile::Projectile(int imageID, int startX, int startY, StudentWorld* world,
 	m_side = side;
 }
 
-//cabbage class
-Cabbage::Cabbage(int startX, int startY, StudentWorld* world)
-	: Projectile(IID_CABBAGE, startX, startY, world, false, 0, 2)
-{}
-
-void Cabbage::doSomething() {
+void Projectile::doSomething() {
 	if (!getState())
 		return;
 	offScreen();
 	if (!getState())
 		return;
 	collision(this);
+
 	int x = getX(), y = getY();
-	moveTo(x + 8, y);
 	int d = getDirection();
-	setDirection(d + 20);
+
+	if (typeOfProj() == 0) {
+		moveTo(x + 8, y);
+		setDirection(d + 20);
+	}
+	else if (typeOfProj() == 1) {
+		moveTo(x - 6, y);
+		setDirection(d + 20);
+	}
+	else if (typeOfProj() == 2) {
+		if (isEvil() == true)
+			moveTo(x - 8, y);
+		else
+			moveTo(x + 8, y);
+	}
 }
+
+//cabbage class
+Cabbage::Cabbage(int startX, int startY, StudentWorld* world)
+	: Projectile(IID_CABBAGE, startX, startY, world, false, 0, 2)
+{}
 
 //turnip class
 Turnip::Turnip(int startX, int startY, StudentWorld* world)
 	:Projectile(IID_TURNIP, startX, startY, world, true, 0, 2)
 {}
 
-void Turnip::doSomething() {
-	if (!getState())
-		return;
-	offScreen();
-	if (!getState())
-		return;
-	collision(this);
-	int x = getX(), y = getY();
-	moveTo(x - 6, y);
-	int d = getDirection();
-	setDirection(d + 20);
-}
-
 //torpedo class
 Torpedo::Torpedo(int startX, int startY, StudentWorld* world, bool side)
 	:Projectile(IID_TORPEDO, startX, startY, world, side, 0, 8)
 {}
-
-void Torpedo::doSomething() {
-	if (!getState())
-		return;
-	offScreen();
-	if (!getState())
-		return;
-	collision(this);
-	int x = getX(), y = getY();
-	if (isEvil() == true)
-		moveTo(x - 8, y);
-	else
-		moveTo(x + 8, y);
-}
 
 //goodie class
 Goodie::Goodie(int imageID, int startX, int startY, StudentWorld* world)
