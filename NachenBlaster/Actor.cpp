@@ -224,8 +224,8 @@ void Villain::action() {
 		int rand = randInt(0, 2);
 		//int rand = 0; //REMOVE ONLY FOR DEBUGGING
 		if (rand == 0) {
-			rand = randInt(0, 1);
-			if (rand == 0) {
+			int rand2 = randInt(0, 1);
+			if (rand2 == 0) {
 				Repair* r = new Repair(getX(), getY(), getWorld());
 				getWorld()->addItem(r);
 			}
@@ -246,15 +246,15 @@ void Villain::action() {
 }
 
 Smallgon::Smallgon(int startX, int startY, StudentWorld* world)
-	:Villain(IID_SMALLGON, startX, startY, world, 5 * (1 + (world->getLevel() - 1)*0.1), 2.0, 0, 5)
+	:Villain(IID_SMALLGON, startX, startY, world, (5 * (1 + (world->getLevel() - 1)*0.1)), 2.0, 0, 5)
 {}
 
 Smoregon::Smoregon(int startX, int startY, StudentWorld* world)
-	:Villain(IID_SMOREGON, startX, startY, world, 5 * (1 + (world->getLevel() - 1)*0.1), 2.0, 0, 5)
+	:Villain(IID_SMOREGON, startX, startY, world, (5 * (1 + (world->getLevel() - 1)*0.1)), 2.0, 0, 5)
 {}
 
 Snagglegon::Snagglegon(int startX, int startY, StudentWorld* world)
-	:Villain(IID_SNAGGLEGON, startX, startY, world, 10 * (1 + (world->getLevel() - 1)*0.1), 1.75, 0, 15)
+	:Villain(IID_SNAGGLEGON, startX, startY, world, (10 * (1 + (world->getLevel() - 1)*0.1)), 1.75, 0, 15)
 {
 	changeTravelDir(1);
 }

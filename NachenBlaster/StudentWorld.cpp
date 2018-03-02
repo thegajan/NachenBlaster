@@ -64,7 +64,7 @@ int StudentWorld::move()
 		return GWSTATUS_PLAYER_DIED;
 	}
 	//if goal number of villians killed, move to next level
-	if (m_numVillainsDestroyed >= m_numVillains) {
+	if (m_numVillainsDestroyed == m_numVillains) {
 		playSound(SOUND_FINISHED_LEVEL);
 		return GWSTATUS_FINISHED_LEVEL;
 	}
@@ -96,7 +96,7 @@ void StudentWorld::newItem() {
 	//decide whether to add a new enemy based on probability
 	int d = m_numVillainsDestroyed;
 	int r = m_numVillains - d;
-	int m = 4 + (0.5*getLevel());
+	double m = 4 + (0.5*getLevel());
 	int i = 0;
 	vector<Actor*>::iterator it = m_v.begin();
 	while (it != m_v.end()) {
@@ -131,7 +131,7 @@ void StudentWorld::displayStatus() {
 	oss << healthPerc << "%  Score: " << getScore() << "  Level: " << getLevel() << "  Cabbages: ";
 	int cabbages = (m_nach->getCabbage() * 100) / 30;
 	oss << cabbages << "%  Torpedoes: " << m_nach->getTorpedo();
-	//oss << "Bad Killed:" << m_numVillainsDestroyed; //REMOVE ONLY FOR DEBUGGIN PURPOSES
+//	oss << "Bad Killed:" << m_numVillainsDestroyed; //REMOVE ONLY FOR DEBUGGIN PURPOSES
 	string output = oss.str();
 	setGameStatText(output);
 }
