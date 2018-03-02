@@ -10,13 +10,13 @@ Actor::Actor(int imageID, int startX, int startY, StudentWorld* world, int damag
 	m_world = world;
 	m_damage = damage;
 }
-
+//check if actor is offscreen
 void Actor::offScreen() {
 	int x = getX(), y = getY();
 	if (x < 0 || y < 0 || x >= VIEW_WIDTH || y >= VIEW_HEIGHT)
 		changeState();
 }
-
+//call collision occur
 void Actor::collision(Actor* p) {
 	getWorld()->collisionOccur(p);
 }
@@ -39,7 +39,7 @@ void Star::doSomething() {
 Explosion::Explosion(int startX, int startY, StudentWorld* world)
 	:Actor(IID_EXPLOSION, startX, startY, world)
 {}
-
+//display explosion
 void Explosion::doSomething() {
 	if (!getState())
 		return;
@@ -73,7 +73,7 @@ void NachenBlaster::doSomething	() {
 	if (!getState()) {
 		return;
 	}
-	//check key input
+	//check key input and perform action
 	int ch;
 	if (getWorld()->getKey(ch)) {
 		int x = getX(), y = getY();
@@ -108,7 +108,7 @@ void NachenBlaster::doSomething	() {
 		m_cabbage++;
 	collision(this);
 }
-
+//fire weapons
 void NachenBlaster::fire(int x, int y, int type) {
 	if (type == 0) {
 		m_cabbage = m_cabbage - 5;
@@ -131,7 +131,7 @@ Villain::Villain(int imageID, int startX, int startY, StudentWorld* world, int h
 	m_travelSpeed = travelSpeed;
 	m_flightPath = flightPath;
 }
-
+//control the flight path of all the villains
 void Villain::flightPath() {
 	//return; //HERE FOR DEBUGING TO PREVENT VILLAINS FROM FLIGHING, COMMENT THIS OUT
 	if (m_flightPath == 0 && notSnagg()) {
@@ -147,8 +147,7 @@ void Villain::flightPath() {
 		m_flightPath = randInt(1, 32);
 	}
 }
-
-
+//perform explosion if villain is killed
 void Villain::killed() {
 	if (getHealth() < 0 && getState()) {
 		action();
@@ -157,7 +156,7 @@ void Villain::killed() {
 		getWorld()->addItem(e);
 	}
 }
-
+//control flight action of a villain
 void Villain::fly() {
 	//return;
 	switch (m_travelDir)
@@ -175,7 +174,7 @@ void Villain::fly() {
 	if (notSnagg())
 		m_flightPath--;
 }
-
+//control what each villain does during the flight process
 bool Villain::actionDuringFlight() {
 	int nachX = getWorld()->getNach()->getX();
 	int nachY = getWorld()->getNach()->getY();
@@ -203,7 +202,7 @@ bool Villain::actionDuringFlight() {
 	}
 	return false;
 }
-
+//villain class do something during each tick
 void Villain::doSomething() {
 	if (!getState())
 		return;
@@ -218,7 +217,8 @@ void Villain::doSomething() {
 	collision(this);
 	killed();
 }
-
+//villain special action during a collision
+//villain should drop goodie depending on type
 void Villain::action() {
 	if (smoregon()) {
 		int rand = randInt(0, 2);
@@ -244,7 +244,7 @@ void Villain::action() {
 		}
 	}
 }
-
+//
 Smallgon::Smallgon(int startX, int startY, StudentWorld* world)
 	:Villain(IID_SMALLGON, startX, startY, world, (5 * (1 + (world->getLevel() - 1)*0.1)), 2.0, 0, 5)
 {}
@@ -265,7 +265,7 @@ Projectile::Projectile(int imageID, int startX, int startY, StudentWorld* world,
 {
 	m_side = side;
 }
-
+//control projectile motion during tick
 void Projectile::doSomething() {
 	if (!getState())
 		return;
@@ -312,7 +312,7 @@ Torpedo::Torpedo(int startX, int startY, StudentWorld* world, bool side)
 Goodie::Goodie(int imageID, int startX, int startY, StudentWorld* world)
 	:Actor(imageID, startX, startY, world, 0, 0, 0.5, 1)
 {}
-
+//control goodie motion during tick
 void Goodie::doSomething() {
 	if (!getState())
 		return;
@@ -328,7 +328,7 @@ void Goodie::doSomething() {
 ExtraLife::ExtraLife(int startX, int startY, StudentWorld* world)
 	: Goodie(IID_LIFE_GOODIE, startX, startY, world)
 {}
-
+//give user extra life
 void ExtraLife::action() {
 	getWorld()->incLives();
 }
@@ -337,7 +337,7 @@ void ExtraLife::action() {
 Repair::Repair(int startX, int startY, StudentWorld* world)
 	: Goodie(IID_REPAIR_GOODIE, startX, startY, world)
 {}
-
+//give user extra health
 void Repair::action() {
 	int nachHealth = getWorld()->getNach()->getHealth();
 	if (nachHealth + 10 > 50)
@@ -350,7 +350,7 @@ void Repair::action() {
 TorpedoGoodie::TorpedoGoodie(int startX, int startY, StudentWorld* world)
 	: Goodie(IID_TORPEDO_GOODIE, startX, startY, world)
 {}
-
+//give user torpedoes
 void TorpedoGoodie::action() {
 	getWorld()->getNach()->setTorpedo(5);
 }
